@@ -1,4 +1,5 @@
-bin
-obj
-dev
-examples
+*/bin
+*/obj
+*/dev
+*/examples
+notes
