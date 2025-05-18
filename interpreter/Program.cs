@@ -31,7 +31,7 @@ class Program
         Lexer lexer = new(sourceCode);
         List<string> result = lexer.Lex();
 
-        Console.WriteLine(string.Join('_', result));
+        Console.Write(string.Join('_', result));
     }
 
     public static void Main(string[] args)

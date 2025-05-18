@@ -3,19 +3,20 @@ using System.Collections.Generic;
 
 namespace lexer;
 
-class Lexer
+public class Lexer
 {
     string s;
     List<string> lexemes = new();
 
     int start;
     int next;
-    int line;
+
+    // TODO: add line numbers to lexeems
+
 
     public Lexer(string sourceCode)
     {
         s = sourceCode;
-        line = 1;
     }
 
     private bool isWhitespace(char c)
