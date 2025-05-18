@@ -90,7 +90,7 @@ class Lexer
         return c;
     }
 
-    private char peekNextChar()
+    private char peekNextChar() // TODO: better handling of EOF logic
     {
         return atEOF() ? '\0' : s[next];
     }
