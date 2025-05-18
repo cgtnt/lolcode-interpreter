@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace lexer;
@@ -8,7 +9,7 @@ class Lexer
     List<string> lexemes = new();
 
     int start;
-    int current;
+    int next;
     int line;
 
     public Lexer(string sourceCode)
@@ -17,25 +18,67 @@ class Lexer
         line = 1;
     }
 
+    private bool isWhitespace(char c)
+    {
+        return (c == ' ' || c == '\t');
+    }
+
+    private bool isNewline(char c)
+    {
+        return c == '\n';
+    }
+
+    private bool isLexemeTerminator(char c)
+    {
+        return c switch
+        {
+            ',' => true,
+            '\r' => true,
+            '"' => true,
+            _ when isWhitespace(c) => true,
+            _ when isNewline(c) => true,
+            _ => false,
+        };
+    }
+
     private string consumeNextLexeme()
     {
-        char c = consumeNextChar();
+        char c;
+        string lexeme;
 
-        switch (c)
+        // skip whitespace
+        while (isWhitespace(peekNextChar()))
+            consumeNextChar();
+
+        start = next;
+        c = consumeNextChar();
+
+        // preserve newline
+        if (isNewline(c) || c == ',')
         {
-            case ',':
-                break;
-            case ' ':
-                break;
-            case '\r':
-                break;
-            case '\n':
-                line++;
-                start++;
-                break;
+            lexeme = "\n";
         }
+        else if (c == '"')
+        { // preserve whitespace inside strings
+            do
+            {
+                if (atEOF())
+                    throw new System.Exception("Unterminated string");
 
-        string lexeme = s[start..current];
+                c = consumeNextChar();
+            } while (c != '"');
+
+            lexeme = s[start..next];
+        }
+        else
+        {
+            while (!isLexemeTerminator(peekNextChar()))
+            {
+                consumeNextChar();
+            }
+
+            lexeme = s[start..next];
+        }
 
         return lexeme;
     }
@@ -43,25 +86,25 @@ class Lexer
     private char consumeNextChar()
     {
         char c = peekNextChar();
-        current++;
+        next++;
         return c;
     }
 
     private char peekNextChar()
     {
-        return atEOF() ? '\0' : s[current];
+        return atEOF() ? '\0' : s[next];
     }
 
     private bool atEOF()
     {
-        return current >= s.Length;
+        return next >= s.Length;
     }
 
-    public List<string> lex()
+    public List<string> Lex()
     {
         while (!atEOF())
         {
-            start = current;
+            start = next;
             lexemes.Add(consumeNextLexeme());
         }
 

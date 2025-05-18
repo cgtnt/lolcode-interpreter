@@ -4,7 +4,7 @@ namespace ErrorReporter;
 
 class ErrorReporter
 {
-    void print(string error)
+    public static void Print(string error)
     {
         Console.WriteLine(error);
     }
