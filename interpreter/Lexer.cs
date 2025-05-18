@@ -11,9 +11,6 @@ public class Lexer
     int start;
     int next;
 
-    // TODO: add line numbers to lexeems
-
-
     public Lexer(string sourceCode)
     {
         s = sourceCode;

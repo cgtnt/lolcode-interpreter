@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using ErrorReporter;
 using lexer;
+using tokenizer;
 
 class Program
 {
@@ -29,7 +30,10 @@ class Program
     private static void Process(string sourceCode)
     {
         Lexer lexer = new(sourceCode);
-        List<string> result = lexer.Lex();
+        List<string> lexemes = lexer.Lex();
+
+        Tokenizer tokenizer = new(lexemes.ToArray());
+        List<Token> tokens = tokenizer.Tokenize();
     }
 
     public static void Main(string[] args)

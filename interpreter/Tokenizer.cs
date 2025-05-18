@@ -23,11 +23,116 @@ class Token
 
 class Tokenizer
 {
-    string[] src;
+    private int LONGEST_KEYWORD_LEN = 4;
+
+    private string[] src;
+    private List<Token> tokens = new();
+
+    private int start;
+    private int next;
+    private int line;
 
     public Tokenizer(string[] src)
     {
         this.src = src;
+    }
+
+    private bool atEOF()
+    {
+        return next >= src.Length;
+    }
+
+    private bool isInteger(string lexeme)
+    {
+        foreach (char c in lexeme)
+        {
+            if (!char.IsNumber(c))
+                return false;
+        }
+
+        return true;
+    }
+
+    private bool isFloat(string lexeme) //TODO: maybe update to disallow num beginning or ending with a dot
+    {
+        bool decimalDotReached = false;
+        foreach (char c in lexeme)
+        {
+            if (!char.IsNumber(c))
+                if (!decimalDotReached && c == '.')
+                    decimalDotReached = true;
+                else
+                    return false;
+        }
+
+        return true;
+    }
+
+    private bool isString(string lexeme)
+    {
+        return (lexeme.Length >= 2 && lexeme[0] == '"' && lexeme[^1] == '"');
+    }
+
+    private bool isIdentifier(string lexeme)
+    {
+        if (lexeme.Length < 1 || !char.IsLetter(lexeme[0]))
+            return false;
+
+        foreach (char c in lexeme)
+        {
+            if (c != '_' && !char.IsLetter(c))
+                return false;
+        }
+
+        return true;
+    }
+
+    private Token nextToken()
+    {
+        string[]? lexemeBuffer = new string[LONGEST_KEYWORD_LEN];
+        int bufferNext = 0;
+
+        for (bufferNext = 0; bufferNext < LONGEST_KEYWORD_LEN; ++bufferNext)
+        {
+            lexemeBuffer[bufferNext] = src[next + bufferNext];
+
+            if (!keywords.ContainsKey(string.Join(" ", lexemeBuffer)))
+            { // TODO: Change this and keywords to have list of lexems instad of string?
+                break;
+            }
+        }
+
+        TokenType type;
+        string match;
+
+        if (lexemeBuffer[1] is null)
+        {
+            // definitely not keyword - only 1 word long and failed to match
+            type = TokenType.INVALID;
+            match = "";
+        }
+        else
+        {
+            // longer than one word when failed to match, which means first word at least matches
+            lexemeBuffer[bufferNext] = null;
+            match = string.Join(" ", lexemeBuffer);
+            keywords.TryGetValue(match, out type);
+        }
+
+        start = next;
+        next = next + bufferNext;
+
+        return new Token(type, match, line);
+    }
+
+    public List<Token> Tokenize()
+    {
+        while (!atEOF())
+        {
+            tokens.Add(nextToken());
+        }
+
+        return tokens;
     }
 
     public enum TokenType
