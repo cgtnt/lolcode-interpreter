@@ -30,8 +30,6 @@ class Program
     {
         Lexer lexer = new(sourceCode);
         List<string> result = lexer.Lex();
-
-        Console.Write(string.Join('_', result));
     }
 
     public static void Main(string[] args)
