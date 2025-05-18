@@ -15,7 +15,7 @@ public class Utils
 [TestClass]
 public class LexerTests
 {
-    private string TEST_DATA_DIR = "examples";
+    private string TEST_DATA_DIR = "data";
 
     [TestMethod]
     public void TestExample1()
