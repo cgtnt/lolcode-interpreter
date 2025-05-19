@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using FileUtils;
-using lexer;
+using Lexing;
 
-namespace tests;
+namespace Testing;
 
 [TestClass]
 public class LexerTests

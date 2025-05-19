@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using ErrorReporter;
-using lexer;
-using tokenizer;
+using FileUtils;
+using Lexing;
+using Tokenization;
 
 class Program
 {
@@ -18,7 +18,7 @@ class Program
     {
         try
         {
-            string sourceCode = File.ReadAllText(file);
+            string sourceCode = Utils.loadSoureCode(file);
             Process(sourceCode);
         }
         catch (Exception e)

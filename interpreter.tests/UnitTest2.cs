@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using FileUtils;
-using lexer;
-using tokenizer;
+using Lexing;
+using Tokenization;
 
-namespace tests;
+namespace Testing;
 
 [TestClass]
 public class TokenizerTests

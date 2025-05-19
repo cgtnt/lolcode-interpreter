@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace tokenizer;
+namespace Tokenization;
 
 public class Token
 {
