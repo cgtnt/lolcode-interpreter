@@ -132,7 +132,31 @@ public class Tokenizer
 
         if (longestMatchLength == -1)
         {
+            string lexeme = lexemeBuffer[0];
+            match = lexeme;
             // definitely not keyword - only 1 word long and failed to match
+            // TODO: IMPLEMENT
+            if (isIdentifier(lexeme))
+            {
+                type = TokenType.T_IDENTIFIER;
+            }
+            else if (isInteger(lexeme))
+            {
+                type = TokenType.T_INT;
+            }
+            else if (isFloat(lexeme))
+            {
+                type = TokenType.T_FLOAT;
+            }
+            else if (isString(lexeme))
+            {
+                type = TokenType.T_STRING;
+            }
+            else
+            {
+                type = TokenType.INVALID;
+            }
+
             next = start + 1;
         }
         else
@@ -179,6 +203,7 @@ public class Tokenizer
         T_INT, // numbr
         T_FLOAT, // numbar
         T_UNTYPED, // noob
+        T_IDENTIFIER,
 
         // assignment
         ASSIGN, // r

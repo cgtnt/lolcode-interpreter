@@ -20,7 +20,7 @@ public class TokenizerTests
         Tokenizer tokenizer = new(lexemes.ToArray());
         List<Token> result = tokenizer.Tokenize();
 
-        Assert.AreEqual(string.Join('-', result), Utils.loadFile($"{filename}.out"));
+        Assert.AreEqual(string.Join('-', result), Utils.loadFile($"{filename}.tokenizer.out"));
     }
 
     [TestMethod]
