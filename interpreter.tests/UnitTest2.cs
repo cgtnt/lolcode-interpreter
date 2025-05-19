@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using FileUtils;
 using lexer;
 using tokenizer;
 
@@ -9,31 +10,23 @@ public class TokenizerTests
 {
     private string TEST_DATA_DIR = "data";
 
-    [TestMethod]
-    public void TestValidCode()
+    private void AssertTokenize(string filepath)
     {
-        string filename = $"../../../{TEST_DATA_DIR}/ex3"; //TODO: fix path
-
-        Lexer lexer = new(Utils.loadFile(filename));
+        Lexer lexer = new(Utils.loadSoureCode(filepath));
         List<string> lexemes = lexer.Lex();
 
         Tokenizer tokenizer = new(lexemes.ToArray());
         List<Token> result = tokenizer.Tokenize();
 
-        Assert.AreEqual(string.Join('-', result), Utils.loadFile($"{filename}.tokenizer.out"));
+        Assert.AreEqual(string.Join('-', result), Utils.loadSoureCode($"{filepath}.tokenizer.out"));
     }
 
-    [TestMethod]
-    public void TestVariableDeclaration()
+    [DataTestMethod]
+    [DataRow("ex3")]
+    [DataRow("ex4")]
+    public void TestValidCode(string filename)
     {
-        string filename = $"../../../{TEST_DATA_DIR}/ex4"; //TODO: fix path
-
-        Lexer lexer = new(Utils.loadFile(filename));
-        List<string> lexemes = lexer.Lex();
-
-        Tokenizer tokenizer = new(lexemes.ToArray());
-        List<Token> result = tokenizer.Tokenize();
-
-        Assert.AreEqual(string.Join('-', result), Utils.loadFile($"{filename}.tokenizer.out"));
+        string filepath = $"../../../{TEST_DATA_DIR}/{filename}";
+        AssertTokenize(filepath);
     }
 }

@@ -1,41 +1,29 @@
 using System.Collections.Generic;
+using FileUtils;
 using lexer;
 
 namespace tests;
-
-public class Utils
-{
-    public static string loadFile(string filename)
-    {
-        return File.ReadAllText(filename);
-    }
-}
 
 [TestClass]
 public class LexerTests
 {
     private string TEST_DATA_DIR = "data";
 
-    [TestMethod]
-    public void TestValidCode()
+    private void AssertLex(string filepath)
     {
-        string filename = $"../../../{TEST_DATA_DIR}/ex1"; //TODO: fix path
-
-        Lexer lexer = new(Utils.loadFile(filename));
+        Lexer lexer = new(Utils.loadSoureCode(filepath));
         List<string> result = lexer.Lex();
 
-        Assert.AreEqual(string.Join('-', result), Utils.loadFile($"{filename}.lexer.out"));
+        Assert.AreEqual(string.Join('-', result), File.ReadAllText($"{filepath}.lexer.out"));
     }
 
-    [TestMethod]
-    public void TestVariableDeclaration()
+    [DataTestMethod]
+    [DataRow("ex1")]
+    [DataRow("ex4")]
+    public void TestValidCode(string filename)
     {
-        string filename = $"../../../{TEST_DATA_DIR}/ex4"; //TODO: fix path
-
-        Lexer lexer = new(Utils.loadFile(filename));
-        List<string> result = lexer.Lex();
-
-        Assert.AreEqual(string.Join('-', result), Utils.loadFile($"{filename}.lexer.out"));
+        string filepath = $"../../../{TEST_DATA_DIR}/{filename}";
+        AssertLex(filepath);
     }
 
     [TestMethod]
@@ -43,8 +31,7 @@ public class LexerTests
     {
         string filename = $"../../../{TEST_DATA_DIR}/ex2"; //TODO: fix path
 
-        Lexer lexer = new(Utils.loadFile(filename));
-
+        Lexer lexer = new(Utils.loadSoureCode(filename));
         Assert.ThrowsException<Exception>(lexer.Lex);
     }
 }
