@@ -24,7 +24,7 @@ public class LexerTests
         Lexer lexer = new(Utils.loadFile(filename));
         List<string> result = lexer.Lex();
 
-        Assert.AreEqual(string.Join('_', result), Utils.loadFile($"{filename}.out"));
+        Assert.AreEqual(string.Join('-', result), Utils.loadFile($"{filename}.lexer.out"));
     }
 
     [TestMethod]
@@ -35,7 +35,7 @@ public class LexerTests
         Lexer lexer = new(Utils.loadFile(filename));
         List<string> result = lexer.Lex();
 
-        Assert.AreEqual(string.Join('_', result), Utils.loadFile($"{filename}.lexer.out"));
+        Assert.AreEqual(string.Join('-', result), Utils.loadFile($"{filename}.lexer.out"));
     }
 
     [TestMethod]

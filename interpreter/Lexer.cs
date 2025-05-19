@@ -51,10 +51,10 @@ public class Lexer
         start = next;
         c = consumeNextChar();
 
-        // preserve newline
+        // preserve newline and comma
         if (isNewline(c) || c == ',')
         {
-            lexeme = "\n";
+            lexeme = $"{c}";
         }
         else if (c == '"')
         { // preserve whitespace inside strings
