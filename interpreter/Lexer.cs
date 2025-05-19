@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using CharChecking;
 
 namespace Lexing;
 
@@ -16,16 +17,6 @@ public class Lexer
         s = sourceCode;
     }
 
-    private bool isWhitespace(char c)
-    {
-        return (c == ' ' || c == '\t');
-    }
-
-    private bool isNewline(char c)
-    {
-        return c == '\n';
-    }
-
     private bool isLexemeTerminator(char c)
     {
         return c switch
@@ -33,8 +24,8 @@ public class Lexer
             ',' => true,
             '\r' => true,
             '"' => true,
-            _ when isWhitespace(c) => true,
-            _ when isNewline(c) => true,
+            _ when CharChecker.isWhitespace(c) => true,
+            _ when CharChecker.isNewline(c) => true,
             _ => false,
         };
     }
@@ -45,14 +36,14 @@ public class Lexer
         string lexeme;
 
         // skip whitespace
-        while (isWhitespace(peekNextChar()))
+        while (CharChecker.isWhitespace(peekNextChar()))
             consumeNextChar();
 
         start = next;
         c = consumeNextChar();
 
         // preserve newline and comma
-        if (isNewline(c) || c == ',')
+        if (CharChecker.isNewline(c) || c == ',')
         {
             lexeme = $"{c}";
         }

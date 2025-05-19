@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CharChecking;
 
 namespace Tokenization;
 
@@ -78,12 +79,7 @@ public class Tokenizer
     // TODO: move these 2 funcs to utils, share with lexer
     private bool isCommandTerminator(string lexeme)
     {
-        return (isNewline(lexeme) || lexeme == ",");
-    }
-
-    private bool isNewline(string lexeme)
-    {
-        return (lexeme == "\n");
+        return (CharChecker.isNewline(lexeme) || lexeme == ",");
     }
 
     private bool isIdentifier(string lexeme)
@@ -102,18 +98,17 @@ public class Tokenizer
 
     private Token nextToken()
     {
-        while (!atEOF() && isCommandTerminator(src[next]))
+        if (isCommandTerminator(src[next]))
         {
-            if (isNewline(src[next]))
-                line++;
+            while (!atEOF() && isCommandTerminator(src[next]))
+            {
+                if (CharChecker.isNewline(src[next]))
+                    line++;
 
-            start++;
-            next++;
-        }
+                next++;
+            }
 
-        if (atEOF())
-        {
-            return new Token(TokenType.EOF, "", line);
+            return new Token(TokenType.COMMAND_TERMINATOR, src[next - 1], line);
         }
 
         string[]? lexemeBuffer = new string[LONGEST_KEYWORD_LEN];
@@ -123,11 +118,8 @@ public class Tokenizer
         string match = "";
         int longestMatchLength = -1;
 
-        while (bufferNext < LONGEST_KEYWORD_LEN)
+        while (!atEOF() && bufferNext < LONGEST_KEYWORD_LEN)
         {
-            if (atEOF())
-                break;
-
             lexemeBuffer[bufferNext++] = src[next++];
 
             string candidate = string.Join(" ", lexemeBuffer.Take(bufferNext));
@@ -170,12 +162,11 @@ public class Tokenizer
                 type = TokenType.INVALID;
             }
 
-            next = start + 1;
+            next = start + 1; // consume 1 token
         }
         else
         {
-            // keyword matched, move back next
-            next = start + longestMatchLength;
+            next = start + longestMatchLength; // consume matched # of tokens
         }
 
         return new Token(type, match, line);
@@ -189,6 +180,8 @@ public class Tokenizer
             tokens.Add(nextToken());
         }
 
+        tokens.Add(new Token(TokenType.EOF, "", line));
+
         return tokens;
     }
 
@@ -196,6 +189,7 @@ public class Tokenizer
     {
         // lexer control tokens
         INVALID,
+        COMMAND_TERMINATOR,
         EOF,
 
         // program
@@ -254,7 +248,6 @@ public class Tokenizer
         // separators/chain operators
         AND, // an
         END_INF, // mkay
-        COMMA, // , -- line terminator
 
         // boolean operations
         BOOL_AND, // both of
@@ -313,7 +306,6 @@ public class Tokenizer
         { "SMOOSH", TokenType.CONCAT },
         { "AN", TokenType.AND },
         { "MKAY", TokenType.END_INF },
-        { ",", TokenType.COMMA },
         { "BOTH OF", TokenType.BOOL_AND },
         { "EITHER OF", TokenType.BOOL_OR },
         { "WON OF", TokenType.BOOL_XOR },
