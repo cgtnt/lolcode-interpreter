@@ -1,8 +1,7 @@
-namespace interpreter.tests;
-
 using System.Collections.Generic;
-using interpreter;
 using lexer;
+
+namespace tests;
 
 public class Utils
 {
@@ -18,7 +17,7 @@ public class LexerTests
     private string TEST_DATA_DIR = "data";
 
     [TestMethod]
-    public void TestExample1()
+    public void TestValidCode()
     {
         string filename = $"../../../{TEST_DATA_DIR}/ex1"; //TODO: fix path
 
@@ -27,5 +26,14 @@ public class LexerTests
 
         Assert.AreEqual(string.Join('_', result), Utils.loadFile($"{filename}.out"));
     }
-}
 
+    [TestMethod]
+    public void TestUnterminatedString()
+    {
+        string filename = $"../../../{TEST_DATA_DIR}/ex2"; //TODO: fix path
+
+        Lexer lexer = new(Utils.loadFile(filename));
+
+        Assert.ThrowsException<Exception>(lexer.Lex);
+    }
+}

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace tokenizer;
 
-class Token
+public class Token
 {
     public Tokenizer.TokenType type;
     public string text;
@@ -19,11 +19,11 @@ class Token
 
     public override string ToString()
     {
-        return $"@{line}: {type} {text}";
+        return $"@{line}:T_{type}:{text}";
     }
 }
 
-class Tokenizer
+public class Tokenizer
 {
     private int LONGEST_KEYWORD_LEN = 4;
 
@@ -98,6 +98,11 @@ class Tokenizer
             next++;
         }
 
+        if (atEOF())
+        {
+            return new Token(TokenType.EOF, "", line);
+        }
+
         string[]? lexemeBuffer = new string[LONGEST_KEYWORD_LEN];
         int bufferNext = 0;
 
@@ -146,8 +151,6 @@ class Tokenizer
             start = next;
             tokens.Add(nextToken());
         }
-
-        tokens.Add(new Token(TokenType.EOF, "", line));
 
         return tokens;
     }

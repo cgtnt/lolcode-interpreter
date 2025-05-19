@@ -34,11 +34,6 @@ class Program
 
         Tokenizer tokenizer = new(lexemes.ToArray());
         List<Token> tokens = tokenizer.Tokenize();
-
-        foreach (Token token in tokens)
-        {
-            Console.WriteLine(token);
-        }
     }
 
     public static void Main(string[] args)
