@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace tokenizer;
 
@@ -28,9 +30,9 @@ class Tokenizer
     private string[] src;
     private List<Token> tokens = new();
 
-    private int start;
-    private int next;
-    private int line;
+    private int start = 0;
+    private int next = 0;
+    private int line = 1;
 
     public Tokenizer(string[] src)
     {
@@ -89,38 +91,50 @@ class Tokenizer
 
     private Token nextToken()
     {
+        while (!atEOF() && src[next] == "\n")
+        {
+            line++;
+            start++;
+            next++;
+        }
+
         string[]? lexemeBuffer = new string[LONGEST_KEYWORD_LEN];
         int bufferNext = 0;
 
-        for (bufferNext = 0; bufferNext < LONGEST_KEYWORD_LEN; ++bufferNext)
-        {
-            lexemeBuffer[bufferNext] = src[next + bufferNext];
+        TokenType type = TokenType.INVALID;
+        string match = "";
+        int longestMatchLength = -1;
 
-            if (!keywords.ContainsKey(string.Join(" ", lexemeBuffer)))
-            { // TODO: Change this and keywords to have list of lexems instad of string?
+        while (bufferNext < LONGEST_KEYWORD_LEN)
+        {
+            if (atEOF())
                 break;
+
+            lexemeBuffer[bufferNext++] = src[next++];
+
+            string candidate = string.Join(" ", lexemeBuffer.Take(bufferNext));
+
+            if (keywords.TryGetValue(candidate, out TokenType potential_type))
+            { // TODO: Change this and keywords to have list of lexems instad of string?
+                if (bufferNext > longestMatchLength)
+                {
+                    longestMatchLength = bufferNext;
+                    match = candidate;
+                    type = potential_type;
+                }
             }
         }
 
-        TokenType type;
-        string match;
-
-        if (lexemeBuffer[1] is null)
+        if (longestMatchLength == -1)
         {
             // definitely not keyword - only 1 word long and failed to match
-            type = TokenType.INVALID;
-            match = "";
+            next = start + 1;
         }
         else
         {
-            // longer than one word when failed to match, which means first word at least matches
-            lexemeBuffer[bufferNext] = null;
-            match = string.Join(" ", lexemeBuffer);
-            keywords.TryGetValue(match, out type);
+            // keyword matched, move back next
+            next = start + longestMatchLength;
         }
-
-        start = next;
-        next = next + bufferNext;
 
         return new Token(type, match, line);
     }
@@ -129,8 +143,11 @@ class Tokenizer
     {
         while (!atEOF())
         {
+            start = next;
             tokens.Add(nextToken());
         }
+
+        tokens.Add(new Token(TokenType.EOF, "", line));
 
         return tokens;
     }
