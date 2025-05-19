@@ -28,6 +28,17 @@ public class LexerTests
     }
 
     [TestMethod]
+    public void TestVariableDeclaration()
+    {
+        string filename = $"../../../{TEST_DATA_DIR}/ex4"; //TODO: fix path
+
+        Lexer lexer = new(Utils.loadFile(filename));
+        List<string> result = lexer.Lex();
+
+        Assert.AreEqual(string.Join('_', result), Utils.loadFile($"{filename}.lexer.out"));
+    }
+
+    [TestMethod]
     public void TestUnterminatedString()
     {
         string filename = $"../../../{TEST_DATA_DIR}/ex2"; //TODO: fix path

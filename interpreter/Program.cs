@@ -34,6 +34,8 @@ class Program
 
         Tokenizer tokenizer = new(lexemes.ToArray());
         List<Token> tokens = tokenizer.Tokenize();
+
+        // Console.Write(string.Join('-', tokens));
     }
 
     public static void Main(string[] args)

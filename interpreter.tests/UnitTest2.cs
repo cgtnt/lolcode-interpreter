@@ -22,4 +22,18 @@ public class TokenizerTests
 
         Assert.AreEqual(string.Join('-', result), Utils.loadFile($"{filename}.out"));
     }
+
+    [TestMethod]
+    public void TestVariableDeclaration()
+    {
+        string filename = $"../../../{TEST_DATA_DIR}/ex4"; //TODO: fix path
+
+        Lexer lexer = new(Utils.loadFile(filename));
+        List<string> lexemes = lexer.Lex();
+
+        Tokenizer tokenizer = new(lexemes.ToArray());
+        List<Token> result = tokenizer.Tokenize();
+
+        Assert.AreEqual(string.Join('-', result), Utils.loadFile($"{filename}.tokenizer.out"));
+    }
 }
