@@ -11,6 +11,7 @@ public class Lexer
 
     int start;
     int next;
+    int line = 1;
 
     public Lexer(string sourceCode)
     {
@@ -46,13 +47,18 @@ public class Lexer
         if (CharChecker.isNewline(c) || c == ',')
         {
             lexeme = $"{c}";
+
+            if (CharChecker.isNewline(c))
+            {
+                line++;
+            }
         }
         else if (c == '"')
         { // preserve whitespace inside strings
             do
             {
                 if (atEOF())
-                    throw new System.Exception("Unterminated string");
+                    throw new ErrorReporter.SyntaxError("Unterminated string", line);
 
                 c = consumeNextChar();
             } while (c != '"');

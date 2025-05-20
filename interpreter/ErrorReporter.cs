@@ -9,3 +9,14 @@ class ErrorReporter
         Console.WriteLine(error);
     }
 }
+
+public class SyntaxError : System.Exception
+{
+    public SyntaxError() { }
+
+    public SyntaxError(string message, int line)
+        : base($"Line {line}: {message}") { }
+
+    public SyntaxError(string message, int line, Exception inner)
+        : base($"Line {line}: {message}", inner) { }
+}
