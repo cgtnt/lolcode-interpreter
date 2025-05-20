@@ -61,7 +61,7 @@ public class Lexer
         }
         else
         {
-            while (!isLexemeTerminator(peekNextChar()))
+            while (!atEOF() && !isLexemeTerminator(peekNextChar()))
             {
                 consumeNextChar();
             }
@@ -74,14 +74,12 @@ public class Lexer
 
     private char consumeNextChar()
     {
-        char c = peekNextChar();
-        next++;
-        return c;
+        return s[next++];
     }
 
-    private char peekNextChar() // TODO: better handling of EOF logic
+    private char peekNextChar()
     {
-        return atEOF() ? '\0' : s[next];
+        return s[next];
     }
 
     private bool atEOF()
