@@ -17,11 +17,32 @@ public class CharChecker
         return c == ',';
     }
 
+    public static bool isCommandTerminator(char c)
+    {
+        return isNewline(c) || isComma(c);
+    }
+
+    public static bool isComma(string s)
+    {
+        if (s.Length > 1)
+            return false;
+
+        return (isComma(char.Parse(s)));
+    }
+
     public static bool isNewline(string s)
     {
         if (s.Length > 1)
             return false;
 
         return (isNewline(char.Parse(s)));
+    }
+
+    public static bool isCommandTerminator(string s)
+    {
+        if (s.Length > 1)
+            return false;
+
+        return (isCommandTerminator(char.Parse(s)));
     }
 }

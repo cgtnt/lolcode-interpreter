@@ -76,12 +76,6 @@ public class Tokenizer
         return (lexeme.Length >= 2 && lexeme[0] == '"' && lexeme[^1] == '"');
     }
 
-    // TODO: move these 2 funcs to utils, share with lexer
-    private bool isCommandTerminator(string lexeme)
-    {
-        return (CharChecker.isNewline(lexeme) || lexeme == ",");
-    }
-
     private bool isIdentifier(string lexeme)
     {
         if (lexeme.Length < 1 || !char.IsLetter(lexeme[0]))
@@ -98,9 +92,9 @@ public class Tokenizer
 
     private Token nextToken()
     {
-        if (isCommandTerminator(src[next]))
+        if (CharChecker.isCommandTerminator(src[next]))
         {
-            while (!atEOF() && isCommandTerminator(src[next]))
+            while (!atEOF() && CharChecker.isCommandTerminator(src[next]))
             {
                 if (CharChecker.isNewline(src[next]))
                     line++;

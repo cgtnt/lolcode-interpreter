@@ -44,7 +44,7 @@ public class Lexer
         c = consumeNextChar();
 
         // preserve newline and comma
-        if (CharChecker.isNewline(c) || c == ',')
+        if (CharChecker.isCommandTerminator(c))
         {
             lexeme = $"{c}";
 
