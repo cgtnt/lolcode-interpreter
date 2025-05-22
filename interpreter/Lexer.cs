@@ -6,12 +6,12 @@ namespace Lexing;
 
 public class Lexer
 {
-    string s;
-    List<string> lexemes = new();
+    private string s;
+    private List<string> lexemes = new();
 
-    int start;
-    int next;
-    int line = 1;
+    private int start;
+    private int next;
+    private int line = 1;
 
     public Lexer(string sourceCode)
     {
