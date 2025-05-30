@@ -20,6 +20,7 @@ public class LexerTests
     [DataTestMethod]
     [DataRow("ex1")]
     [DataRow("ex4")]
+    [DataRow("ex5")]
     public void TestValidCode(string filename)
     {
         string filepath = $"../../../{TEST_DATA_DIR}/{filename}";
