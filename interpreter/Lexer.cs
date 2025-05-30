@@ -78,20 +78,11 @@ public class Lexer
         return lexeme;
     }
 
-    char consumeNextChar()
-    {
-        return s[next++];
-    }
+    char consumeNextChar() => s[next++];
 
-    char peekNextChar()
-    {
-        return s[next];
-    }
+    char peekNextChar() => s[next];
 
-    bool atEOF()
-    {
-        return next >= s.Length;
-    }
+    bool atEOF() => next >= s.Length;
 
     public List<string> Lex()
     {

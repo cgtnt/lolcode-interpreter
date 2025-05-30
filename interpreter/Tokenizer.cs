@@ -18,10 +18,7 @@ public class Token
         this.line = line;
     }
 
-    public override string ToString()
-    {
-        return $"@{line}:T_{type}:{text}";
-    }
+    public override string ToString() => $"@{line}:T_{type}:{text}";
 }
 
 public class Tokenizer
@@ -40,10 +37,7 @@ public class Tokenizer
         this.src = src;
     }
 
-    bool atEOF()
-    {
-        return next >= src.Length;
-    }
+    bool atEOF() => next >= src.Length;
 
     bool isInteger(string lexeme)
     {
@@ -71,10 +65,7 @@ public class Tokenizer
         return true;
     }
 
-    bool isString(string lexeme)
-    {
-        return (lexeme.Length >= 2 && lexeme[0] == '"' && lexeme[^1] == '"');
-    }
+    bool isString(string lexeme) => (lexeme.Length >= 2 && lexeme[0] == '"' && lexeme[^1] == '"');
 
     bool isIdentifier(string lexeme)
     {
@@ -134,7 +125,7 @@ public class Tokenizer
             string lexeme = lexemeBuffer[0];
             match = lexeme;
             // definitely not keyword - only 1 word long and failed to match
-            // TODO: IMPLEMENT
+
             if (isIdentifier(lexeme))
             {
                 type = TokenType.T_IDENTIFIER;
@@ -229,6 +220,8 @@ public class Tokenizer
         { "SMALLR OF", TokenType.MIN },
         { "UPPIN", TokenType.INCREMENT },
         { "NERFIN", TokenType.DECREMENT },
+        { "WIN", TokenType.TRUE },
+        { "FAIL", TokenType.FALSE },
     };
 }
 
@@ -258,6 +251,10 @@ public enum TokenType
     T_FLOAT, // numbar
     T_UNTYPED, // noob
     T_IDENTIFIER,
+
+    // values
+    TRUE, // win
+    FALSE, // fail
 
     // assignment
     ASSIGN, // r
