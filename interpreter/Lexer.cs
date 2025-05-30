@@ -6,19 +6,19 @@ namespace Lexing;
 
 public class Lexer
 {
-    private string s;
-    private List<string> lexemes = new();
+    string s;
+    List<string> lexemes = new();
 
-    private int start;
-    private int next;
-    private int line = 1;
+    int start;
+    int next;
+    int line = 1;
 
     public Lexer(string sourceCode)
     {
         s = sourceCode;
     }
 
-    private bool isLexemeTerminator(char c)
+    bool isLexemeTerminator(char c)
     {
         return c switch
         {
@@ -31,7 +31,7 @@ public class Lexer
         };
     }
 
-    private string consumeNextLexeme()
+    string consumeNextLexeme()
     {
         char c;
         string lexeme;
@@ -78,17 +78,17 @@ public class Lexer
         return lexeme;
     }
 
-    private char consumeNextChar()
+    char consumeNextChar()
     {
         return s[next++];
     }
 
-    private char peekNextChar()
+    char peekNextChar()
     {
         return s[next];
     }
 
-    private bool atEOF()
+    bool atEOF()
     {
         return next >= s.Length;
     }

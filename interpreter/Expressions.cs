@@ -10,9 +10,16 @@ public interface Expr
 
 public class BinaryExpr : Expr
 {
-    Expr left;
-    Expr right;
     Token op;
+    Expr first;
+    Expr second;
+
+    public BinaryExpr(Token op, Expr first, Expr second)
+    {
+        this.op = op;
+        this.first = first;
+        this.second = second;
+    }
 
     public Object evaluate()
     {
@@ -22,8 +29,14 @@ public class BinaryExpr : Expr
 
 public class UnaryExpr : Expr
 {
-    Expr expr;
     Token op;
+    Expr first;
+
+    public UnaryExpr(Token op, Expr first)
+    {
+        this.op = op;
+        this.first = first;
+    }
 
     public Object evaluate()
     {
@@ -34,6 +47,11 @@ public class UnaryExpr : Expr
 public class LiteralExpr : Expr
 {
     Object literal;
+
+    public LiteralExpr(Object literal)
+    {
+        this.literal = literal;
+    }
 
     public Object evaluate()
     {

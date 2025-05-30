@@ -26,26 +26,26 @@ public class Token
 
 public class Tokenizer
 {
-    private int LONGEST_KEYWORD_LEN = 4;
+    int LONGEST_KEYWORD_LEN = 4;
 
-    private string[] src;
-    private List<Token> tokens = new();
+    string[] src;
+    List<Token> tokens = new();
 
-    private int start = 0;
-    private int next = 0;
-    private int line = 1;
+    int start = 0;
+    int next = 0;
+    int line = 1;
 
     public Tokenizer(string[] src)
     {
         this.src = src;
     }
 
-    private bool atEOF()
+    bool atEOF()
     {
         return next >= src.Length;
     }
 
-    private bool isInteger(string lexeme)
+    bool isInteger(string lexeme)
     {
         foreach (char c in lexeme)
         {
@@ -56,7 +56,7 @@ public class Tokenizer
         return true;
     }
 
-    private bool isFloat(string lexeme) //TODO: maybe update to disallow num beginning or ending with a dot
+    bool isFloat(string lexeme) //TODO: maybe update to disallow num beginning or ending with a dot
     {
         bool decimalDotReached = false;
         foreach (char c in lexeme)
@@ -71,12 +71,12 @@ public class Tokenizer
         return true;
     }
 
-    private bool isString(string lexeme)
+    bool isString(string lexeme)
     {
         return (lexeme.Length >= 2 && lexeme[0] == '"' && lexeme[^1] == '"');
     }
 
-    private bool isIdentifier(string lexeme)
+    bool isIdentifier(string lexeme)
     {
         if (lexeme.Length < 1 || !char.IsLetter(lexeme[0]))
             return false;
@@ -90,7 +90,7 @@ public class Tokenizer
         return true;
     }
 
-    private Token nextToken()
+    Token nextToken()
     {
         if (CharChecker.isCommandTerminator(src[next]))
         {

@@ -7,12 +7,22 @@ namespace parser;
 
 public class Parser
 {
-    private List<Token> tokens;
+    List<Token> tokens;
+    int next;
 
     public Parser(List<Token> tokens)
     {
         this.tokens = tokens;
     }
 
-    public Expr Parse() { }
+    public Expr Parse()
+    {
+        return null; // FIXME: update this
+    }
+
+    // parsing helpers
+
+
+    // grammar rule helpers
+    Expr Expression() { }
 }

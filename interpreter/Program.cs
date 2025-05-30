@@ -7,14 +7,14 @@ using Tokenization;
 
 class Program
 {
-    private static string EXECUTABLE_NAME = "lolcode";
+    static string EXECUTABLE_NAME = "lolcode";
 
-    private static void Usage()
+    static void Usage()
     {
         Console.WriteLine($"Usage: {EXECUTABLE_NAME} [file]");
     }
 
-    private static void ProcessFile(string file)
+    static void ProcessFile(string file)
     {
         try
         {
@@ -27,7 +27,7 @@ class Program
         }
     }
 
-    private static void Process(string sourceCode)
+    static void Process(string sourceCode)
     {
         Lexer lexer = new(sourceCode);
         List<string> lexemes = lexer.Lex();
