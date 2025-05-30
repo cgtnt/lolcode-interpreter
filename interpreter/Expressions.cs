@@ -6,6 +6,7 @@ namespace ExpressionDefinitions;
 public interface Expr
 {
     public Object evaluate();
+    public string print();
 }
 
 public class BinaryExpr : Expr
@@ -25,6 +26,8 @@ public class BinaryExpr : Expr
     {
         return null;
     }
+
+    public string print() => $"{op.text} {first.print()} {second.print()}";
 }
 
 public class UnaryExpr : Expr
@@ -42,6 +45,8 @@ public class UnaryExpr : Expr
     {
         return null;
     }
+
+    public string print() => $"{op.text} {first.print()}";
 }
 
 public class LiteralExpr : Expr
@@ -57,4 +62,17 @@ public class LiteralExpr : Expr
     {
         return literal;
     }
+
+    public string print() => literal.ToString();
+}
+
+public class InvalidExpr : Expr
+{
+    public Object evaluate()
+    {
+        Console.WriteLine(print());
+        return null;
+    }
+
+    public string print() => "INVALID_EXPR";
 }
