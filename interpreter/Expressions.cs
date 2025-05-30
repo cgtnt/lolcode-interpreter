@@ -9,6 +9,7 @@ public interface Expr
     public string print();
 }
 
+#pragma warning disable
 public class BinaryExpr : Expr
 {
     Token op;
