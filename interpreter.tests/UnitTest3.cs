@@ -21,7 +21,7 @@ public class ParserExpressionTests
         List<Token> tokens = tokenizer.Tokenize();
 
         Parser parser = new(tokens);
-        Expr AST = parser.Parse();
+        Expr AST = parser.Parse() as Expr; // TODO: update to handle null AST (failed parsing)
 
         Assert.AreEqual(AST.ToString(), File.ReadAllText($"{filepath}.parser.out"));
     }

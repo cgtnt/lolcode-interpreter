@@ -58,7 +58,7 @@ public class Lexer
             do
             {
                 if (atEOF())
-                    throw new ErrorReporter.SyntaxError("Unterminated string", line);
+                    throw new SyntaxException("Unterminated string", line);
 
                 c = consumeNextChar();
             } while (c != '"');

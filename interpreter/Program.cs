@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using ErrorReporter;
 using FileUtils;
 using Lexing;
 using Parsing;

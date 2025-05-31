@@ -33,6 +33,6 @@ public class LexerTests
         string filename = $"../../../{TEST_DATA_DIR}/ex2"; //TODO: fix path
 
         Lexer lexer = new(Utils.loadSoureCode(filename));
-        Assert.ThrowsException<ErrorReporter.SyntaxError>(lexer.Lex);
+        Assert.ThrowsException<SyntaxException>(lexer.Lex);
     }
 }

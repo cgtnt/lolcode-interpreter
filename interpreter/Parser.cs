@@ -17,10 +17,19 @@ public class Parser
         this.tokens = tokens;
     }
 
-    public Expr Parse()
+    public Expr? Parse()
     {
-        Expr AST;
-        AST = expression();
+        Expr? AST = null;
+
+        try
+        {
+            AST = expression();
+        }
+        catch (ParsingException e)
+        {
+            ExceptionReporter.Log(e);
+            synchronize();
+        }
 
         return AST; // FIXME: update this
     }
@@ -32,27 +41,23 @@ public class Parser
         return tokens[next++];
     }
 
-    bool consumeNextIf(out Token token, params TokenType[] types)
-    {
-        if (isType(types))
-        {
-            token = consumeNext();
-            return true;
-        }
-        else
-        {
-            token = null;
-            return false;
-        }
-    }
-
     Token peekNext() => tokens[next];
 
     bool isType(params TokenType[] types) => types.Any(t => peekNext().type == t);
 
     bool atEOF() => tokens[next].type == EOF;
 
-    // grammar rule helpers
+    void synchronize()
+    {
+        while (!isType(COMMAND_TERMINATOR))
+            consumeNext();
+
+        consumeNext();
+    }
+
+    // TODO: statement parser
+
+    //  expression parser
     Expr expression()
     {
         if (isType(AND))
@@ -109,10 +114,10 @@ public class Parser
             return new LiteralExpr(double.Parse(consumeNext().text));
 
         if (isType(T_STRING))
-            return new LiteralExpr(consumeNext().text);
+            return new LiteralExpr(consumeNext().text[1..^1]);
 
         // invalid expression
-        throw new ErrorReporter.SyntaxError("Invalid expression", consumeNext().line);
+        throw new ParsingException("Invalid expression", consumeNext().line);
     }
 
     Expr naryExpr()
@@ -132,7 +137,7 @@ public class Parser
         }
         else
         {
-            throw new ErrorReporter.SyntaxError($"Expected 'MKAY' to terminate {op.text}", op.line);
+            throw new ParsingException($"Expected 'MKAY' to terminate {op.text}", op.line);
         }
     }
 }
