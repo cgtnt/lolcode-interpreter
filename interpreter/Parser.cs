@@ -20,12 +20,7 @@ public class Parser
     public Expr Parse()
     {
         Expr AST;
-
-        do
-        {
-            AST = expression();
-            Console.WriteLine(AST.print());
-        } while (!atEOF());
+        AST = expression();
 
         return AST; // FIXME: update this
     }
