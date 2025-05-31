@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using ExpressionDefinitions;
 using FileUtils;
+using Interpretation;
 using Lexing;
 using Parsing;
 using Tokenization;
@@ -37,7 +39,10 @@ class Program
 
         // Console.Write(string.Join('-', lexemes));
         Parser parser = new(tokens);
-        Console.Write(parser.Parse());
+        Expr AST = parser.Parse();
+
+        Interpreter interpreter = new();
+        interpreter.Interpret(AST);
     }
 
     public static void Main(string[] args)

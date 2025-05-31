@@ -83,7 +83,7 @@ public class Parser
             return new BinaryExpr(consumeNext(), expression(), expression());
 
         // unary expressions
-        if (isType(BOOL_NOT, INCREMENT, DECREMENT))
+        if (isType(BOOL_NOT)) // TODO: increment, decremeent?
         {
             return new BinaryExpr(consumeNext(), expression(), expression());
         }
@@ -122,7 +122,7 @@ public class Parser
 
     Expr naryExpr()
     {
-        Token op = consumeNext();
+        Token op = (consumeNext());
         Expr expr = expression();
 
         while (!isType(END_INF, EOF, COMMAND_TERMINATOR))

@@ -1,11 +1,15 @@
 using System;
+using System.Numerics;
+using EvaluationUtils;
 using Tokenization;
+using static EvaluationUtils.EvalUtils;
+using static Tokenization.TokenType;
 
 namespace ExpressionDefinitions;
 
 public interface Expr
 {
-    public Object evaluate();
+    public object evaluate();
     public string ToString();
 }
 
@@ -23,9 +27,137 @@ public class BinaryExpr : Expr
         this.second = second;
     }
 
-    public Object evaluate()
+    public object evaluate()
     {
-        return null;
+        object firstEval = first.evaluate();
+        object secondEval = second.evaluate();
+
+        switch (op.type)
+        {
+            case PLUS:
+                return TryExecuteOp(
+                    op,
+                    firstEval,
+                    secondEval,
+                    intOp: (x, y) => x + y,
+                    doubleOp: (x, y) => x + y,
+                    opType: OperationType.ALGEBRAIC
+                );
+                break;
+
+            case MINUS:
+                return TryExecuteOp(
+                    op,
+                    firstEval,
+                    secondEval,
+                    intOp: (x, y) => x - y,
+                    doubleOp: (x, y) => x - y,
+                    opType: OperationType.ALGEBRAIC
+                );
+                break;
+
+            case TIMES:
+                return TryExecuteOp(
+                    op,
+                    firstEval,
+                    secondEval,
+                    intOp: (x, y) => x * y,
+                    doubleOp: (x, y) => x * y,
+                    opType: OperationType.ALGEBRAIC
+                );
+                break;
+
+            case QUOTIENT:
+                return TryExecuteOp(
+                    op,
+                    firstEval,
+                    secondEval,
+                    intOp: (x, y) => x / y,
+                    doubleOp: (x, y) => x / y,
+                    opType: OperationType.ALGEBRAIC
+                );
+                break;
+
+            case MOD:
+                return TryExecuteOp(
+                    op,
+                    firstEval,
+                    secondEval,
+                    intOp: (x, y) => x % y,
+                    doubleOp: (x, y) => x % y,
+                    opType: OperationType.ALGEBRAIC
+                );
+                break;
+
+            case MAX:
+                return TryExecuteOp(
+                    op,
+                    firstEval,
+                    secondEval,
+                    intOp: (x, y) => Math.Max(x, y),
+                    doubleOp: (x, y) => Math.Max(x, y),
+                    opType: OperationType.ALGEBRAIC
+                );
+                break;
+
+            case MIN:
+                return TryExecuteOp(
+                    op,
+                    firstEval,
+                    secondEval,
+                    intOp: (x, y) => Math.Min(x, y),
+                    doubleOp: (x, y) => Math.Min(x, y),
+                    opType: OperationType.ALGEBRAIC
+                );
+                break;
+
+            // boolean operations
+            case BOOL_AND_INF:
+            case BOOL_AND:
+                return TryExecuteOp(
+                    op,
+                    firstEval,
+                    secondEval,
+                    boolOp: (x, y) => x && y,
+                    opType: OperationType.BOOLEAN
+                );
+                break;
+
+            case BOOL_OR_INF:
+            case BOOL_OR:
+                return TryExecuteOp(
+                    op,
+                    firstEval,
+                    secondEval,
+                    boolOp: (x, y) => x || y,
+                    opType: OperationType.BOOLEAN
+                );
+                break;
+
+            case BOOL_XOR:
+                return TryExecuteOp(
+                    op,
+                    firstEval,
+                    secondEval,
+                    boolOp: (x, y) => x ^ y,
+                    opType: OperationType.BOOLEAN
+                );
+                break;
+
+            // equalities
+            case EQUAL:
+                return equality(firstEval, secondEval);
+                break;
+
+            case NOT_EQUAL:
+                return !equality(firstEval, secondEval);
+                break;
+
+            // invalid operator
+            default:
+                throw new InvalidOpException($"Invalid operator {op.text}", op.line);
+                break;
+        }
     }
 
     public override string ToString() => $"{op.text} {first} {second}";
@@ -42,9 +174,27 @@ public class UnaryExpr : Expr
         this.first = first;
     }
 
-    public Object evaluate()
+    public object evaluate()
     {
-        return null;
+        object firstEval = first.evaluate();
+
+        switch (op.type)
+        {
+            case BOOL_NOT:
+                return TryExecuteOp(
+                    op,
+                    firstEval,
+                    false,
+                    boolOp: (x, y) => !x,
+                    opType: OperationType.BOOLEAN
+                );
+                break;
+
+            // invalid operator
+            default:
+                throw new InvalidOpException($"Invalid operator {op.text}", op.line);
+                break;
+        }
     }
 
     public override string ToString() => $"{op.text} {first}";
@@ -52,14 +202,14 @@ public class UnaryExpr : Expr
 
 public class LiteralExpr : Expr
 {
-    Object literal;
+    object literal;
 
-    public LiteralExpr(Object literal)
+    public LiteralExpr(object literal)
     {
         this.literal = literal;
     }
 
-    public Object evaluate()
+    public object evaluate()
     {
         return literal;
     }
