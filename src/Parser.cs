@@ -61,7 +61,7 @@ public class Parser
     Expr expression()
     {
         if (isType(AND))
-            consumeNext(); // FIXME: Temporary. shouldnt beignored
+            consumeNext();
 
         // binary expressions
         if (

@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\interpreter\interpreter.csproj" />
+    <ProjectReference Include="..\src\src.csproj" />
   </ItemGroup>
 
 </Project>
