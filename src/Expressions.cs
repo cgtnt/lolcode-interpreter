@@ -1,5 +1,4 @@
 using System;
-using System.Numerics;
 using EvaluationUtils;
 using Tokenization;
 using static EvaluationUtils.EvalUtils;
@@ -13,7 +12,6 @@ public interface Expr
     public string ToString();
 }
 
-#pragma warning disable
 public class BinaryExpr : Expr
 {
     Token op;
@@ -43,7 +41,6 @@ public class BinaryExpr : Expr
                     doubleOp: (x, y) => x + y,
                     opType: OperationType.ALGEBRAIC
                 );
-                break;
 
             case MINUS:
                 return TryExecuteOp(
@@ -54,7 +51,6 @@ public class BinaryExpr : Expr
                     doubleOp: (x, y) => x - y,
                     opType: OperationType.ALGEBRAIC
                 );
-                break;
 
             case TIMES:
                 return TryExecuteOp(
@@ -65,7 +61,6 @@ public class BinaryExpr : Expr
                     doubleOp: (x, y) => x * y,
                     opType: OperationType.ALGEBRAIC
                 );
-                break;
 
             case QUOTIENT:
                 return TryExecuteOp(
@@ -76,7 +71,6 @@ public class BinaryExpr : Expr
                     doubleOp: (x, y) => x / y,
                     opType: OperationType.ALGEBRAIC
                 );
-                break;
 
             case MOD:
                 return TryExecuteOp(
@@ -87,7 +81,6 @@ public class BinaryExpr : Expr
                     doubleOp: (x, y) => x % y,
                     opType: OperationType.ALGEBRAIC
                 );
-                break;
 
             case MAX:
                 return TryExecuteOp(
@@ -98,7 +91,6 @@ public class BinaryExpr : Expr
                     doubleOp: (x, y) => Math.Max(x, y),
                     opType: OperationType.ALGEBRAIC
                 );
-                break;
 
             case MIN:
                 return TryExecuteOp(
@@ -109,7 +101,6 @@ public class BinaryExpr : Expr
                     doubleOp: (x, y) => Math.Min(x, y),
                     opType: OperationType.ALGEBRAIC
                 );
-                break;
 
             // boolean operations
             case BOOL_AND_INF:
@@ -121,7 +112,6 @@ public class BinaryExpr : Expr
                     boolOp: (x, y) => x && y,
                     opType: OperationType.BOOLEAN
                 );
-                break;
 
             case BOOL_OR_INF:
             case BOOL_OR:
@@ -132,7 +122,6 @@ public class BinaryExpr : Expr
                     boolOp: (x, y) => x || y,
                     opType: OperationType.BOOLEAN
                 );
-                break;
 
             case BOOL_XOR:
                 return TryExecuteOp(
@@ -142,21 +131,17 @@ public class BinaryExpr : Expr
                     boolOp: (x, y) => x ^ y,
                     opType: OperationType.BOOLEAN
                 );
-                break;
 
             // equalities
             case EQUAL:
                 return equality(firstEval, secondEval);
-                break;
 
             case NOT_EQUAL:
                 return !equality(firstEval, secondEval);
-                break;
 
             // invalid operator
             default:
                 throw new InvalidOpException($"Invalid operator {op.text}", op.line);
-                break;
         }
     }
 
@@ -188,12 +173,10 @@ public class UnaryExpr : Expr
                     boolOp: (x, y) => !x,
                     opType: OperationType.BOOLEAN
                 );
-                break;
 
             // invalid operator
             default:
                 throw new InvalidOpException($"Invalid operator {op.text}", op.line);
-                break;
         }
     }
 
@@ -214,5 +197,5 @@ public class LiteralExpr : Expr
         return literal;
     }
 
-    public override string ToString() => literal.ToString();
+    public override string ToString() => $"{literal}";
 }

@@ -39,10 +39,12 @@ class Program
 
         // Console.Write(string.Join('-', lexemes));
         Parser parser = new(tokens);
-        Expr AST = parser.Parse();
+        Expr? AST = parser.Parse();
 
         Interpreter interpreter = new();
-        interpreter.Interpret(AST);
+
+        if (AST is not null)
+            Console.WriteLine(interpreter.Interpret(AST));
     }
 
     public static void Main(string[] args)

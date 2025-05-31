@@ -3,18 +3,19 @@ using ExpressionDefinitions;
 
 namespace Interpretation;
 
+#pragma warning disable
 public class Interpreter
 {
-    public void Interpret(Expr block)
+    public object Interpret(Expr block)
     {
         try
         {
-            object value = block.evaluate();
-            Console.WriteLine(value);
+            return block.evaluate();
         }
         catch (RuntimeException e)
         {
             ExceptionReporter.Log(e);
+            return null;
         }
     }
 }
