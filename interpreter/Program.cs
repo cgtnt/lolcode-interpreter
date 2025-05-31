@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ErrorReporter;
 using FileUtils;
 using Lexing;
+using Parsing;
 using Tokenization;
 
 class Program
@@ -35,7 +36,9 @@ class Program
         Tokenizer tokenizer = new(lexemes.ToArray());
         List<Token> tokens = tokenizer.Tokenize();
 
-        Console.Write(string.Join('-', tokens));
+        // Console.Write(string.Join('-', lexemes));
+        Parser parser = new(tokens);
+        Console.Write(parser.Parse());
     }
 
     public static void Main(string[] args)

@@ -26,19 +26,38 @@ public class Parser
     }
 
     // parsing helpers
-    Token consumeNextToken() => tokens[next++];
+    Token consumeNext()
+    {
+        Debug.Log($"Consuming: {tokens[next]}");
+        return tokens[next++];
+    }
 
-    Token peekNextToken() => tokens[next];
+    bool consumeNextIf(out Token token, params TokenType[] types)
+    {
+        if (isType(types))
+        {
+            token = consumeNext();
+            return true;
+        }
+        else
+        {
+            token = null;
+            return false;
+        }
+    }
 
-    bool isType(params TokenType[] types) => types.Any(t => peekNextToken().type == t);
+    Token peekNext() => tokens[next];
 
-    bool atEOF() => tokens[next].type == TokenType.EOF;
+    bool isType(params TokenType[] types) => types.Any(t => peekNext().type == t);
+
+    bool atEOF() => tokens[next].type == EOF;
 
     // grammar rule helpers
     Expr expression()
     {
         if (isType(AND))
-            consumeNextToken(); // FIXME: Temporary. shouldnt beignored
+            consumeNext(); // FIXME: Temporary. shouldnt beignored
+
         // binary expressions
         if (
             isType(
@@ -56,33 +75,64 @@ public class Parser
                 BOOL_XOR
             )
         )
-        {
-            return new BinaryExpr(consumeNextToken(), expression(), expression());
-        }
+            return new BinaryExpr(consumeNext(), expression(), expression());
 
         // unary expressions
         if (isType(BOOL_NOT, INCREMENT, DECREMENT))
         {
-            return new UnaryExpr(consumeNextToken(), expression());
+            return new BinaryExpr(consumeNext(), expression(), expression());
+        }
+
+        // n-ary expressions
+        if (isType(BOOL_AND_INF, BOOL_OR_INF))
+        {
+            return naryExpr();
         }
 
         // literal expressions
         if (isType(TRUE))
+        {
+            consumeNext();
             return new LiteralExpr(true);
+        }
 
         if (isType(FALSE))
+        {
+            consumeNext();
             return new LiteralExpr(false);
+        }
 
         if (isType(T_INT))
-            return new LiteralExpr(int.Parse(consumeNextToken().text));
+            return new LiteralExpr(int.Parse(consumeNext().text));
 
         if (isType(T_FLOAT))
-            return new LiteralExpr(double.Parse(consumeNextToken().text));
+            return new LiteralExpr(double.Parse(consumeNext().text));
 
         if (isType(T_STRING))
-            return new LiteralExpr(consumeNextToken().text);
+            return new LiteralExpr(consumeNext().text);
 
-        consumeNextToken();
-        return new InvalidExpr();
+        // invalid expression
+        throw new ErrorReporter.SyntaxError("Invalid expression", consumeNext().line);
+    }
+
+    Expr naryExpr()
+    {
+        Token op = consumeNext();
+        Expr expr = expression();
+
+        while (!isType(END_INF, EOF, COMMAND_TERMINATOR))
+        {
+            expr = new BinaryExpr(op, expr, expression());
+        }
+
+        if (isType(END_INF))
+        {
+            consumeNext();
+            return expr;
+        }
+        else
+        {
+            throw new ErrorReporter.SyntaxError($"Expected 'MKAY' to terminate {op.text}", op.line);
+        }
     }
 }

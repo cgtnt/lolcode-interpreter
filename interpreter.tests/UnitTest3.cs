@@ -23,13 +23,14 @@ public class ParserExpressionTests
         Parser parser = new(tokens);
         Expr AST = parser.Parse();
 
-        Assert.AreEqual(AST.print(), File.ReadAllText($"{filepath}.parser.out"));
+        Assert.AreEqual(AST.ToString(), File.ReadAllText($"{filepath}.parser.out"));
     }
 
     [DataTestMethod]
     [DataRow("ex1")]
     [DataRow("ex2")]
     [DataRow("ex3")]
+    [DataRow("ex4")]
     public void TestValidCode(string filename)
     {
         string filepath = $"../../../{TEST_DATA_DIR}/{filename}";

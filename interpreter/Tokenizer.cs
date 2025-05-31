@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using CharChecking;
+using static Tokenization.TokenType;
 
 namespace Tokenization;
 
@@ -93,13 +94,13 @@ public class Tokenizer
                 next++;
             }
 
-            return new Token(TokenType.COMMAND_TERMINATOR, src[next - 1], line);
+            return new Token(COMMAND_TERMINATOR, src[next - 1], line);
         }
 
         string[]? lexemeBuffer = new string[LONGEST_KEYWORD_LEN];
         int bufferNext = 0;
 
-        TokenType type = TokenType.INVALID;
+        TokenType type = INVALID;
         string match = "";
         int longestMatchLength = -1;
 
@@ -128,23 +129,23 @@ public class Tokenizer
 
             if (isIdentifier(lexeme))
             {
-                type = TokenType.T_IDENTIFIER;
+                type = T_IDENTIFIER;
             }
             else if (isInteger(lexeme))
             {
-                type = TokenType.T_INT;
+                type = T_INT;
             }
             else if (isFloat(lexeme))
             {
-                type = TokenType.T_FLOAT;
+                type = T_FLOAT;
             }
             else if (isString(lexeme))
             {
-                type = TokenType.T_STRING;
+                type = T_STRING;
             }
             else
             {
-                type = TokenType.INVALID;
+                type = INVALID;
             }
 
             next = start + 1; // consume 1 token
@@ -165,63 +166,63 @@ public class Tokenizer
             tokens.Add(nextToken());
         }
 
-        tokens.Add(new Token(TokenType.EOF, "", line));
+        tokens.Add(new Token(EOF, "", line));
 
         return tokens;
     }
 
     public static Dictionary<string, TokenType> keywords = new Dictionary<string, TokenType>
     {
-        { "HAI", TokenType.BEGIN },
-        { "KTHX", TokenType.END },
-        { "IT", TokenType.TEMP },
-        { "I HAS A", TokenType.DECLARE_VAR },
-        { "ITZ", TokenType.DECLARE_SET_VAR },
-        { "ITZ A", TokenType.DECLARE_TYPE_VAR },
-        { "YARN", TokenType.T_STRING },
-        { "TROOF", TokenType.T_BOOL },
-        { "NUMBR", TokenType.T_INT },
-        { "NUMBAR", TokenType.T_FLOAT },
-        { "NOOB", TokenType.T_UNTYPED },
-        { "R", TokenType.ASSIGN },
-        { "GIMMEH", TokenType.READ_STDIN },
-        { "VISIBLE", TokenType.WRITE_STDIN },
-        { "O RLY?", TokenType.IF },
-        { "YA RLY", TokenType.THEN },
-        { "NO WAI", TokenType.ELSE },
-        { "OIC", TokenType.END_IF },
-        { "YR", TokenType.ARG },
-        { "IM IN YR", TokenType.LOOP_BEGIN },
-        { "IM OUTTA YR", TokenType.LOOP_END },
-        { "TILL", TokenType.UNTIL },
-        { "WILE", TokenType.WHILE },
-        { "GTFO", TokenType.RETURN_NULL },
-        { "HOW IZ I", TokenType.FUNC_BEGIN },
-        { "IF U SAY SO", TokenType.FUNC_END },
-        { "FOUND YR", TokenType.RETURN_VAL },
-        { "I IZ", TokenType.FUNC_CALL },
-        { "SMOOSH", TokenType.CONCAT },
-        { "AN", TokenType.AND },
-        { "MKAY", TokenType.END_INF },
-        { "BOTH OF", TokenType.BOOL_AND },
-        { "EITHER OF", TokenType.BOOL_OR },
-        { "WON OF", TokenType.BOOL_XOR },
-        { "NOT", TokenType.BOOL_NOT },
-        { "ALL OF", TokenType.BOOL_AND_INF },
-        { "ANY OF", TokenType.BOOL_OR_INF },
-        { "BOTH SAEM", TokenType.EQUAL },
-        { "DIFFRINT", TokenType.NOT_EQUAL },
-        { "SUM OF", TokenType.PLUS },
-        { "DIFF OF", TokenType.MINUS },
-        { "PRODUKT OF", TokenType.TIMES },
-        { "QUOSHUNT OF", TokenType.QUOTIENT },
-        { "MOD OF", TokenType.MOD },
-        { "BIGGR OF", TokenType.MAX },
-        { "SMALLR OF", TokenType.MIN },
-        { "UPPIN", TokenType.INCREMENT },
-        { "NERFIN", TokenType.DECREMENT },
-        { "WIN", TokenType.TRUE },
-        { "FAIL", TokenType.FALSE },
+        { "HAI", BEGIN },
+        { "KTHX", END },
+        { "IT", TEMP },
+        { "I HAS A", DECLARE_VAR },
+        { "ITZ", DECLARE_SET_VAR },
+        { "ITZ A", DECLARE_TYPE_VAR },
+        { "YARN", T_STRING },
+        { "TROOF", T_BOOL },
+        { "NUMBR", T_INT },
+        { "NUMBAR", T_FLOAT },
+        { "NOOB", T_UNTYPED },
+        { "R", ASSIGN },
+        { "GIMMEH", READ_STDIN },
+        { "VISIBLE", WRITE_STDIN },
+        { "O RLY?", IF },
+        { "YA RLY", THEN },
+        { "NO WAI", ELSE },
+        { "OIC", END_IF },
+        { "YR", ARG },
+        { "IM IN YR", LOOP_BEGIN },
+        { "IM OUTTA YR", LOOP_END },
+        { "TILL", UNTIL },
+        { "WILE", WHILE },
+        { "GTFO", RETURN_NULL },
+        { "HOW IZ I", FUNC_BEGIN },
+        { "IF U SAY SO", FUNC_END },
+        { "FOUND YR", RETURN_VAL },
+        { "I IZ", FUNC_CALL },
+        { "SMOOSH", CONCAT },
+        { "AN", AND },
+        { "MKAY", END_INF },
+        { "BOTH OF", BOOL_AND },
+        { "EITHER OF", BOOL_OR },
+        { "WON OF", BOOL_XOR },
+        { "NOT", BOOL_NOT },
+        { "ALL OF", BOOL_AND_INF },
+        { "ANY OF", BOOL_OR_INF },
+        { "BOTH SAEM", EQUAL },
+        { "DIFFRINT", NOT_EQUAL },
+        { "SUM OF", PLUS },
+        { "DIFF OF", MINUS },
+        { "PRODUKT OF", TIMES },
+        { "QUOSHUNT OF", QUOTIENT },
+        { "MOD OF", MOD },
+        { "BIGGR OF", MAX },
+        { "SMALLR OF", MIN },
+        { "UPPIN", INCREMENT },
+        { "NERFIN", DECREMENT },
+        { "WIN", TRUE },
+        { "FAIL", FALSE },
     };
 }
 
