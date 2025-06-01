@@ -88,6 +88,11 @@ public class Tokenizer
         {
             while (!atEOF() && CharChecker.isCommandTerminator(src[next]))
             {
+                if (CharChecker.isBang(src[next]))
+                {
+                    return new Token(BANG, src[next++], line);
+                }
+
                 if (CharChecker.isNewline(src[next]))
                     line++;
 
@@ -179,14 +184,14 @@ public class Tokenizer
         { "I HAS A", DECLARE_VAR },
         { "ITZ", DECLARE_SET_VAR },
         { "ITZ A", DECLARE_TYPE_VAR },
-        { "YARN", T_STRING },
-        { "TROOF", T_BOOL },
-        { "NUMBR", T_INT },
-        { "NUMBAR", T_FLOAT },
-        { "NOOB", T_UNTYPED },
+        { "YARN", TI_STRING },
+        { "TROOF", TI_BOOL },
+        { "NUMBR", TI_INT },
+        { "NUMBAR", TI_FLOAT },
+        { "NOOB", TI_UNTYPED },
         { "R", ASSIGN },
         { "GIMMEH", READ_STDIN },
-        { "VISIBLE", WRITE_STDIN },
+        { "VISIBLE", WRITE_STDOUT },
         { "O RLY?", IF },
         { "YA RLY", THEN },
         { "NO WAI", ELSE },
@@ -223,6 +228,7 @@ public class Tokenizer
         { "NERFIN", DECREMENT },
         { "WIN", TRUE },
         { "FAIL", FALSE },
+        { "!", BANG },
     };
 }
 
@@ -253,6 +259,12 @@ public enum TokenType
     T_UNTYPED, // noob
     T_IDENTIFIER,
 
+    TI_STRING, // yarn
+    TI_BOOL, // troof
+    TI_INT, // numbr
+    TI_FLOAT, // numbar
+    TI_UNTYPED, // noob
+
     // values
     TRUE, // win
     FALSE, // fail
@@ -262,7 +274,7 @@ public enum TokenType
 
     // I/O
     READ_STDIN, // gimmeh
-    WRITE_STDIN, // visible
+    WRITE_STDOUT, // visible
 
     // control flow - if
     IF, // o rly?
@@ -272,6 +284,7 @@ public enum TokenType
 
     //arguments
     ARG, // yr
+    BANG, // printstmt ending (for newline)
 
     //control flow - while
     LOOP_BEGIN, // im in yr

@@ -5,6 +5,7 @@ using FileUtils;
 using Interpretation;
 using Lexing;
 using Parsing;
+using StatementDefinitions;
 using Tokenization;
 
 class Program
@@ -37,14 +38,13 @@ class Program
         Tokenizer tokenizer = new(lexemes.ToArray());
         List<Token> tokens = tokenizer.Tokenize();
 
-        // Console.Write(string.Join('-', lexemes));
+        //Debug.Log(string.Join('-', tokens));
+
         Parser parser = new(tokens);
-        Expr? AST = parser.Parse();
+        List<Stmt> statements = parser.Parse();
 
         Interpreter interpreter = new();
-
-        if (AST is not null)
-            Console.WriteLine(interpreter.Interpret(AST));
+        interpreter.Interpret(statements);
     }
 
     public static void Main(string[] args)

@@ -18,6 +18,43 @@ public enum OperationType
     UNIVERSAL,
 }
 
+// TODO: add untyped vars
+public static class Typecaster
+{
+    public static bool TryCastBool(object value) //FIXME: IMplement casting, this doesnt work
+    // https://github.com/justinmeza/lolcode-spec/blob/master/v1.3/lolcode-spec-v1.3.md#types
+    {
+        if (value is not bool && value is not float && value is not int && value is not string)
+            throw new InvalidTypeException();
+
+        return (bool)value;
+    }
+
+    public static int TryCastInt(object value)
+    {
+        if (value is not bool && value is not float && value is not int && value is not string)
+            throw new InvalidTypeException();
+
+        return (int)value;
+    }
+
+    public static double TryCastDouble(object value)
+    {
+        if (value is not bool && value is not float && value is not int && value is not string)
+            throw new InvalidTypeException();
+
+        return (double)value;
+    }
+
+    public static string TryCastString(object value)
+    {
+        if (value is not bool && value is not float && value is not int && value is not string)
+            throw new InvalidTypeException();
+
+        return (string)value;
+    }
+}
+
 public static class EvalUtils
 {
     public static object TryExecuteOp(
@@ -59,7 +96,7 @@ public static class EvalUtils
             (double one, double two) => doubleOp(one, two),
             (int one, double two) => doubleOp(one, two),
             (double one, int two) => doubleOp(one, two),
-            _ => throw new InvalidTypeException(),
+            _ => doubleOp(Typecaster.TryCastDouble(first), Typecaster.TryCastDouble(second)),
         };
     }
 
@@ -67,8 +104,8 @@ public static class EvalUtils
     {
         return (first, second) switch
         {
-            (bool one, bool two) => boolOp(one, two), //TODO: maybe add implict casting? (truthy & falsy)
-            _ => throw new InvalidTypeException(),
+            (bool one, bool two) => boolOp(one, two),
+            _ => boolOp(Typecaster.TryCastBool(first), Typecaster.TryCastBool(second)),
         };
     }
 
@@ -77,7 +114,7 @@ public static class EvalUtils
         return (first, second) switch
         {
             (string one, string two) => stringOp(one, two),
-            _ => throw new InvalidTypeException(),
+            _ => stringOp(Typecaster.TryCastString(first), Typecaster.TryCastString(second)),
         };
     }
 
@@ -88,6 +125,6 @@ public static class EvalUtils
         if (first is null || second is null)
             return false;
 
-        return (first.GetType() == second.GetType() && first.Equals(second));
+        return (first.GetType() == second.GetType() && ((object)first).Equals((object)second)); // FIXME: incorrect value
     }
 }

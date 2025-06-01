@@ -27,6 +27,8 @@ public class SyntaxException : LineException
 
 public class ParsingException : LineException
 {
+    public ParsingException() { }
+
     public ParsingException(string message, int line)
         : base(message, line) { }
 }
@@ -42,5 +44,21 @@ public class InvalidTypeException : RuntimeException
 public class InvalidOpException : RuntimeException
 {
     public InvalidOpException(string message, int line)
+        : base(message, line) { }
+}
+
+public class UninitializedVarExcetion : RuntimeException
+{
+    public UninitializedVarExcetion() { }
+
+    public UninitializedVarExcetion(string message, int line)
+        : base(message, line) { }
+}
+
+public class RedefiningVarException : RuntimeException
+{
+    public RedefiningVarException() { }
+
+    public RedefiningVarException(string message, int line)
         : base(message, line) { }
 }

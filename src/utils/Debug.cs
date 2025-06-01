@@ -2,7 +2,7 @@ using System;
 
 public static class Debug
 {
-    static bool enabled = false;
+    static bool enabled = true;
 
     public static void Log(string message)
     {

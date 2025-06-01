@@ -12,6 +12,11 @@ public class CharChecker
         return c == '\n';
     }
 
+    public static bool isBang(char c)
+    {
+        return c == '!';
+    }
+
     public static bool isComma(char c)
     {
         return c == ',';
@@ -19,7 +24,7 @@ public class CharChecker
 
     public static bool isCommandTerminator(char c)
     {
-        return isNewline(c) || isComma(c);
+        return isNewline(c) || isComma(c) || isBang(c);
     }
 
     public static bool isComma(string s)
@@ -36,6 +41,14 @@ public class CharChecker
             return false;
 
         return (isNewline(char.Parse(s)));
+    }
+
+    public static bool isBang(string s)
+    {
+        if (s.Length > 1)
+            return false;
+
+        return (isBang(char.Parse(s)));
     }
 
     public static bool isCommandTerminator(string s)

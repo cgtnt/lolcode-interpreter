@@ -1,21 +1,26 @@
 using System;
+using System.Collections.Generic;
 using ExpressionDefinitions;
+using ScopeDefinition;
+using StatementDefinitions;
 
 namespace Interpretation;
 
 #pragma warning disable
 public class Interpreter
 {
-    public object Interpret(Expr block)
+    private Scope programScope = new Scope();
+
+    public void Interpret(List<Stmt> statements)
     {
         try
         {
-            return block.evaluate();
+            foreach (Stmt statement in statements)
+                statement.evaluate(programScope); // TODO: scope handling
         }
         catch (RuntimeException e)
         {
             ExceptionReporter.Log(e);
-            return null;
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using EvaluationUtils;
+using ScopeDefinition;
 using Tokenization;
 using static EvaluationUtils.EvalUtils;
 using static Tokenization.TokenType;
@@ -8,7 +9,7 @@ namespace ExpressionDefinitions;
 
 public interface Expr
 {
-    public object evaluate();
+    public object evaluate(Scope s);
     public string ToString();
 }
 
@@ -25,10 +26,10 @@ public class BinaryExpr : Expr
         this.second = second;
     }
 
-    public object evaluate()
+    public object evaluate(Scope scope)
     {
-        object firstEval = first.evaluate();
-        object secondEval = second.evaluate();
+        object firstEval = first.evaluate(scope);
+        object secondEval = second.evaluate(scope);
 
         switch (op.type)
         {
@@ -132,6 +133,16 @@ public class BinaryExpr : Expr
                     opType: OperationType.BOOLEAN
                 );
 
+            // string operations
+            case CONCAT:
+                return TryExecuteOp(
+                    op,
+                    firstEval,
+                    secondEval,
+                    stringOp: (x, y) => x + y,
+                    opType: OperationType.STRING
+                );
+
             // equalities
             case EQUAL:
                 return equality(firstEval, secondEval);
@@ -159,9 +170,9 @@ public class UnaryExpr : Expr
         this.first = first;
     }
 
-    public object evaluate()
+    public object evaluate(Scope scope)
     {
-        object firstEval = first.evaluate();
+        object firstEval = first.evaluate(scope);
 
         switch (op.type)
         {
@@ -183,6 +194,36 @@ public class UnaryExpr : Expr
     public override string ToString() => $"{op.text} {first}";
 }
 
+public class VariableExpr : Expr
+{
+    Token name;
+
+    public VariableExpr(Token name)
+    {
+        this.name = name;
+    }
+
+    public object evaluate(Scope scope)
+    {
+        Scope? s = scope;
+
+        while (s is not null)
+        {
+            if (s.TryGetVar(name.text, out object value))
+                return value;
+            else
+                s = scope.parent;
+        }
+
+        throw new UninitializedVarExcetion(
+            $"Accessing unitiliazed variable {name.text}",
+            name.line
+        );
+    }
+
+    public override string ToString() => $"VAR: {name}";
+}
+
 public class LiteralExpr : Expr
 {
     object literal;
@@ -192,7 +233,7 @@ public class LiteralExpr : Expr
         this.literal = literal;
     }
 
-    public object evaluate()
+    public object evaluate(Scope _)
     {
         return literal;
     }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ExpressionDefinitions;
+using StatementDefinitions;
 using Tokenization;
 using static Tokenization.TokenType;
 
@@ -17,21 +18,24 @@ public class Parser
         this.tokens = tokens;
     }
 
-    public Expr? Parse()
+    public List<Stmt> Parse()
     {
-        Expr? AST = null;
+        List<Stmt> statements = new();
 
-        try
+        while (!atEOF())
         {
-            AST = expression();
-        }
-        catch (ParsingException e)
-        {
-            ExceptionReporter.Log(e);
-            synchronize();
+            try
+            {
+                statements.Add(statement());
+            }
+            catch (ParsingException e)
+            {
+                ExceptionReporter.Log(e);
+                synchronize();
+            }
         }
 
-        return AST; // FIXME: update this
+        return statements;
     }
 
     // parsing helpers
@@ -39,6 +43,28 @@ public class Parser
     {
         Debug.Log($"Consuming: {tokens[next]}");
         return tokens[next++];
+    }
+
+    Token expect(params TokenType[] types)
+    {
+        if (isType(types))
+            return consumeNext();
+        else
+            throw new ParsingException(
+                $"Expected tokens: {string.Join("", types)}",
+                peekNext().line
+            );
+    }
+
+    bool skipNextType(params TokenType[] types)
+    {
+        if (isType(types))
+        {
+            consumeNext();
+            return true;
+        }
+
+        return false;
     }
 
     Token peekNext() => tokens[next];
@@ -55,13 +81,59 @@ public class Parser
         consumeNext();
     }
 
-    // TODO: statement parser
+    // statement parser
+    Stmt statement()
+    {
+        if (skipNextType(DECLARE_VAR))
+        {
+            Token identifier = expect(T_IDENTIFIER);
+            Token type;
+            Expr value;
+
+            if (skipNextType(DECLARE_SET_VAR))
+            {
+                value = expression();
+                expect(COMMAND_TERMINATOR, EOF);
+
+                return new VariableDeclareStmt(identifier, value: value);
+            }
+
+            if (skipNextType(DECLARE_TYPE_VAR))
+            {
+                type = expect(TI_INT, TI_STRING, TI_BOOL, TI_FLOAT, TI_UNTYPED);
+                expect(COMMAND_TERMINATOR, EOF);
+
+                return new VariableDeclareStmt(identifier, type: type.type);
+            }
+
+            expect(COMMAND_TERMINATOR, EOF);
+            return new VariableDeclareStmt(identifier);
+        }
+
+        if (skipNextType(WRITE_STDOUT))
+        {
+            List<Expr> content = new();
+
+            while (!isType(EOF, COMMAND_TERMINATOR, BANG))
+            {
+                content.Add(expression());
+            }
+
+            bool newline = skipNextType(BANG);
+            expect(EOF, COMMAND_TERMINATOR);
+
+            return new PrintStmt(newline, content.ToArray());
+        }
+
+        Expr expr = expression();
+        expect(EOF, COMMAND_TERMINATOR);
+        return new ExpressionStmt(expr);
+    }
 
     //  expression parser
     Expr expression()
     {
-        if (isType(AND))
-            consumeNext();
+        skipNextType(AND);
 
         // binary expressions
         if (
@@ -89,21 +161,25 @@ public class Parser
         }
 
         // n-ary expressions
-        if (isType(BOOL_AND_INF, BOOL_OR_INF))
+        if (isType(BOOL_AND_INF, BOOL_OR_INF, CONCAT))
         {
             return naryExpr();
         }
 
-        // literal expressions
-        if (isType(TRUE))
+        // variable dereferencing
+        if (isType(T_IDENTIFIER))
         {
-            consumeNext();
+            return new VariableExpr(consumeNext());
+        }
+
+        // literal expressions
+        if (skipNextType(TRUE))
+        {
             return new LiteralExpr(true);
         }
 
-        if (isType(FALSE))
+        if (skipNextType(FALSE))
         {
-            consumeNext();
             return new LiteralExpr(false);
         }
 
@@ -117,7 +193,11 @@ public class Parser
             return new LiteralExpr(consumeNext().text[1..^1]);
 
         // invalid expression
-        throw new ParsingException("Invalid expression", consumeNext().line);
+        Token invalid = consumeNext();
+        throw new ParsingException(
+            $"Invalid expression, unexpected token {invalid.text}",
+            invalid.line
+        );
     }
 
     Expr naryExpr()

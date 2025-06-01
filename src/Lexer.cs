@@ -25,6 +25,7 @@ public class Lexer
             ',' => true,
             '\r' => true,
             '"' => true,
+            '!' => true,
             _ when CharChecker.isWhitespace(c) => true,
             _ when CharChecker.isNewline(c) => true,
             _ => false,
