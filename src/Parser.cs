@@ -4,6 +4,7 @@ using System.Linq;
 using ExpressionDefinitions;
 using StatementDefinitions;
 using Tokenization;
+using TypeDefinitions;
 using static Tokenization.TokenType;
 
 namespace Parsing;
@@ -175,22 +176,22 @@ public class Parser
         // literal expressions
         if (skipNextType(TRUE))
         {
-            return new LiteralExpr(true);
+            return new LiteralExpr(new BoolValue(true));
         }
 
         if (skipNextType(FALSE))
         {
-            return new LiteralExpr(false);
+            return new LiteralExpr(new BoolValue(false));
         }
 
         if (isType(T_INT))
-            return new LiteralExpr(int.Parse(consumeNext().text));
+            return new LiteralExpr(new IntValue(int.Parse(consumeNext().text)));
 
         if (isType(T_FLOAT))
-            return new LiteralExpr(double.Parse(consumeNext().text));
+            return new LiteralExpr(new FloatValue(float.Parse(consumeNext().text)));
 
         if (isType(T_STRING))
-            return new LiteralExpr(consumeNext().text[1..^1]);
+            return new LiteralExpr(new StringValue(consumeNext().text[1..^1]));
 
         // invalid expression
         Token invalid = consumeNext();

@@ -2,6 +2,7 @@ using System;
 using EvaluationUtils;
 using ScopeDefinition;
 using Tokenization;
+using TypeDefinitions;
 using static EvaluationUtils.EvalUtils;
 using static Tokenization.TokenType;
 
@@ -9,7 +10,7 @@ namespace ExpressionDefinitions;
 
 public interface Expr
 {
-    public object evaluate(Scope s);
+    public Value evaluate(Scope s);
     public string ToString();
 }
 
@@ -26,10 +27,10 @@ public class BinaryExpr : Expr
         this.second = second;
     }
 
-    public object evaluate(Scope scope)
+    public Value evaluate(Scope scope)
     {
-        object firstEval = first.evaluate(scope);
-        object secondEval = second.evaluate(scope);
+        Value firstEval = first.evaluate(scope);
+        Value secondEval = second.evaluate(scope);
 
         switch (op.type)
         {
@@ -39,7 +40,7 @@ public class BinaryExpr : Expr
                     firstEval,
                     secondEval,
                     intOp: (x, y) => x + y,
-                    doubleOp: (x, y) => x + y,
+                    floatOp: (x, y) => x + y,
                     opType: OperationType.ALGEBRAIC
                 );
 
@@ -49,7 +50,7 @@ public class BinaryExpr : Expr
                     firstEval,
                     secondEval,
                     intOp: (x, y) => x - y,
-                    doubleOp: (x, y) => x - y,
+                    floatOp: (x, y) => x - y,
                     opType: OperationType.ALGEBRAIC
                 );
 
@@ -59,7 +60,7 @@ public class BinaryExpr : Expr
                     firstEval,
                     secondEval,
                     intOp: (x, y) => x * y,
-                    doubleOp: (x, y) => x * y,
+                    floatOp: (x, y) => x * y,
                     opType: OperationType.ALGEBRAIC
                 );
 
@@ -69,7 +70,7 @@ public class BinaryExpr : Expr
                     firstEval,
                     secondEval,
                     intOp: (x, y) => x / y,
-                    doubleOp: (x, y) => x / y,
+                    floatOp: (x, y) => x / y,
                     opType: OperationType.ALGEBRAIC
                 );
 
@@ -79,7 +80,7 @@ public class BinaryExpr : Expr
                     firstEval,
                     secondEval,
                     intOp: (x, y) => x % y,
-                    doubleOp: (x, y) => x % y,
+                    floatOp: (x, y) => x % y,
                     opType: OperationType.ALGEBRAIC
                 );
 
@@ -89,7 +90,7 @@ public class BinaryExpr : Expr
                     firstEval,
                     secondEval,
                     intOp: (x, y) => Math.Max(x, y),
-                    doubleOp: (x, y) => Math.Max(x, y),
+                    floatOp: (x, y) => Math.Max(x, y),
                     opType: OperationType.ALGEBRAIC
                 );
 
@@ -99,7 +100,7 @@ public class BinaryExpr : Expr
                     firstEval,
                     secondEval,
                     intOp: (x, y) => Math.Min(x, y),
-                    doubleOp: (x, y) => Math.Min(x, y),
+                    floatOp: (x, y) => Math.Min(x, y),
                     opType: OperationType.ALGEBRAIC
                 );
 
@@ -148,7 +149,7 @@ public class BinaryExpr : Expr
                 return equality(firstEval, secondEval);
 
             case NOT_EQUAL:
-                return !equality(firstEval, secondEval);
+                return new BoolValue(!equality(firstEval, secondEval).Value);
 
             // invalid operator
             default:
@@ -170,9 +171,9 @@ public class UnaryExpr : Expr
         this.first = first;
     }
 
-    public object evaluate(Scope scope)
+    public Value evaluate(Scope scope)
     {
-        object firstEval = first.evaluate(scope);
+        Value firstEval = first.evaluate(scope);
 
         switch (op.type)
         {
@@ -180,7 +181,7 @@ public class UnaryExpr : Expr
                 return TryExecuteOp(
                     op,
                     firstEval,
-                    false,
+                    new BoolValue(false),
                     boolOp: (x, y) => !x,
                     opType: OperationType.BOOLEAN
                 );
@@ -203,13 +204,13 @@ public class VariableExpr : Expr
         this.name = name;
     }
 
-    public object evaluate(Scope scope)
+    public Value evaluate(Scope scope)
     {
         Scope? s = scope;
 
         while (s is not null)
         {
-            if (s.TryGetVar(name.text, out object value))
+            if (s.TryGetVar(name.text, out Value value))
                 return value;
             else
                 s = scope.parent;
@@ -226,14 +227,14 @@ public class VariableExpr : Expr
 
 public class LiteralExpr : Expr
 {
-    object literal;
+    Value literal;
 
-    public LiteralExpr(object literal)
+    public LiteralExpr(Value val)
     {
-        this.literal = literal;
+        this.literal = val;
     }
 
-    public object evaluate(Scope _)
+    public Value evaluate(Scope _)
     {
         return literal;
     }

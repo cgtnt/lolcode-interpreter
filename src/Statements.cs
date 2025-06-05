@@ -2,6 +2,7 @@ using System;
 using ExpressionDefinitions;
 using ScopeDefinition;
 using Tokenization;
+using TypeDefinitions;
 using static Tokenization.TokenType;
 
 namespace StatementDefinitions;
@@ -17,7 +18,7 @@ public class VariableDeclareStmt : Stmt
     Expr? value;
     TokenType? type;
 
-    public VariableDeclareStmt(Token identifier, Expr? value = null, TokenType? type = TI_UNTYPED)
+    public VariableDeclareStmt(Token identifier, TokenType? type = null, Expr? value = null)
     {
         this.identifier = identifier;
         this.value = value;
@@ -26,7 +27,26 @@ public class VariableDeclareStmt : Stmt
 
     public void evaluate(Scope scope)
     {
-        scope.DefineVar(identifier.text, value); // TODO: type handling
+        if (type is null && value is not null)
+            scope.DefineVar(identifier.text, value.evaluate(scope));
+        else if (type is not null && value is null)
+            scope.DefineVar(
+                identifier.text,
+                type switch
+                {
+                    TI_STRING => new StringValue(),
+                    TI_BOOL => new BoolValue(),
+                    TI_FLOAT => new FloatValue(),
+                    TI_INT => new IntValue(),
+                    TI_UNTYPED => new UntypedValue(),
+                    _ => throw new InvalidTypeException(
+                        $"Cannot declare variable of type {identifier.text}",
+                        identifier.line
+                    ),
+                }
+            );
+        else if (type is null && value is null)
+            scope.DefineVar(identifier.text, new UntypedValue());
     }
 }
 
