@@ -109,6 +109,15 @@ public static class EvalUtils
 
     public static BoolValue equality(Value first, Value second)
     {
-        return new BoolValue(first.RawValue == second.RawValue); // FIXME: incorrect value
+        return new BoolValue(
+            (first, second) switch
+            {
+                (BoolValue one, BoolValue two) => one.Value == two.Value,
+                (StringValue one, StringValue two) => one.Value == two.Value,
+                (IntValue one, IntValue two) => one.Value == two.Value,
+                (FloatValue one, FloatValue two) => one.Value == two.Value,
+                _ => false,
+            }
+        );
     }
 }
