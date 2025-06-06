@@ -59,6 +59,9 @@ public class UninitializedVarExcetion : RuntimeException
 
     public UninitializedVarExcetion(string message, int line)
         : base(message, line) { }
+
+    public UninitializedVarExcetion(string message)
+        : base(message) { }
 }
 
 public class RedefiningVarException : RuntimeException

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using ExpressionDefinitions;
 using ScopeDefinition;
 using Tokenization;
@@ -50,6 +51,23 @@ public class VariableDeclareStmt : Stmt
     }
 }
 
+public class VariableAssignStmt : Stmt
+{
+    Token identifier;
+    Expr value;
+
+    public VariableAssignStmt(Token identifier, Expr value)
+    {
+        this.identifier = identifier;
+        this.value = value;
+    }
+
+    public void evaluate(Scope scope)
+    {
+        scope.SetVar(identifier.text, value.evaluate(scope));
+    }
+}
+
 public class PrintStmt : Stmt
 {
     Expr[] content;
@@ -63,15 +81,29 @@ public class PrintStmt : Stmt
 
     public void evaluate(Scope scope)
     {
-        string result = "";
-
-        foreach (Expr e in content)
-            result += e.evaluate(scope);
+        string result = string.Join("", content.Select(e => e.evaluate(scope)));
 
         if (newline)
             Console.WriteLine(result);
         else
             Console.Write(result);
+    }
+}
+
+public class InputStmt : Stmt
+{
+    Token identifier;
+
+    public InputStmt(Token identifier)
+    {
+        this.identifier = identifier;
+    }
+
+    public void evaluate(Scope scope)
+    {
+        string? input = Console.ReadLine();
+        StringValue value = new StringValue(input is not null ? input : "");
+        scope.SetVar(identifier.text, value);
     }
 }
 
@@ -86,6 +118,6 @@ public class ExpressionStmt : Stmt
 
     public void evaluate(Scope scope)
     {
-        scope.SetValue("IT", expression.evaluate(scope));
+        scope.SetVar("IT", expression.evaluate(scope));
     }
 }

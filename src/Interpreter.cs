@@ -6,7 +6,6 @@ using StatementDefinitions;
 
 namespace Interpretation;
 
-#pragma warning disable
 public class Interpreter
 {
     private Scope programScope = new Scope();

@@ -126,6 +126,20 @@ public class Parser
             return new PrintStmt(newline, content.ToArray());
         }
 
+        if (skipNextType(READ_STDIN))
+        {
+            Token identifier = expect(T_IDENTIFIER);
+            expect(EOF, COMMAND_TERMINATOR);
+            return new InputStmt(identifier);
+        }
+
+        if (isType(T_IDENTIFIER))
+        {
+            Token identifier = consumeNext();
+            if (skipNextType(ASSIGN))
+                return new VariableAssignStmt(identifier, expression());
+        }
+
         Expr expr = expression();
         expect(EOF, COMMAND_TERMINATOR);
         return new ExpressionStmt(expr);

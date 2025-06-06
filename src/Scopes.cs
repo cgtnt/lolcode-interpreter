@@ -22,20 +22,32 @@ public class Scope
         variables.Add(name, value);
     }
 
-    public void SetValue(string name, Value value)
+    public void SetVar(string name, Value value)
     {
-        if (
-            TryGetVar(name, out Value current)
-            && TypeChecker.Equals(current.GetType(), value.GetType())
-        )
-            variables[name] = value;
+        try
+        {
+            Value current = GetVar(name);
+
+            if (TypeChecker.Equals(current.GetType(), value.GetType()) || current is UntypedValue)
+                variables[name] = value;
+            else
+                throw new TypeCastingException(
+                    $"Cannot assign {value.RawValue}({value.GetType()}) to {name}({current.GetType()})"
+                );
+        }
+        catch (UninitializedVarExcetion)
+        {
+            throw new UninitializedVarExcetion(
+                $"Cannot assign {value.RawValue}({value.GetType()}) to uninitiazlied variable {name}"
+            );
+        }
     }
 
-    public bool TryGetVar(string name, out Value value)
+    public Value GetVar(string name)
     {
-        if (variables.TryGetValue(name, out value))
-            return true;
-        else
-            return false;
+        if (variables.TryGetValue(name, out Value? variable))
+            return variable;
+
+        throw new UninitializedVarExcetion($"Cannot access uninitiazlied varaible {name}");
     }
 }
