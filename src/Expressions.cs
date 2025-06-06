@@ -206,20 +206,7 @@ public class VariableExpr : Expr
 
     public Value evaluate(Scope scope)
     {
-        Scope? s = scope;
-
-        while (s is not null)
-        {
-            if (s.TryGetVar(name.text, out Value value))
-                return value;
-            else
-                s = scope.parent;
-        }
-
-        throw new UninitializedVarExcetion(
-            $"Accessing unitiliazed variable {name.text}",
-            name.line
-        );
+        return scope.GetVar(name.text);
     }
 
     public override string ToString() => $"VAR: {name}";

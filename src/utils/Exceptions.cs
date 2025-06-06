@@ -82,3 +82,9 @@ public class TypeCastingException : RuntimeException
     public TypeCastingException(string message)
         : base(message) { }
 }
+
+public class CriticalError : Exception
+{
+    public CriticalError(Exception e)
+        : base(e.Message) { }
+}

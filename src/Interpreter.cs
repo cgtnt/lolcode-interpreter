@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using ExpressionDefinitions;
 using ScopeDefinition;
 using StatementDefinitions;
 
@@ -10,12 +7,11 @@ public class Interpreter
 {
     private Scope programScope = new Scope();
 
-    public void Interpret(List<Stmt> statements)
+    public void Interpret(Stmt statement)
     {
         try
         {
-            foreach (Stmt statement in statements)
-                statement.evaluate(programScope); // TODO: scope handling
+            statement.evaluate(programScope);
         }
         catch (RuntimeException e)
         {

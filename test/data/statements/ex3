@@ -4,8 +4,7 @@ I HAS A fish ITZ "bob"
 I HAS A stone
 I HAS A fishtwo ITZ A YARN
 VISIBLE fish!
-stone R "two"
-VISIBLE stone!
+stone "two"
 fishtwo R "lol"
 VISIBLE fishtwo!
 

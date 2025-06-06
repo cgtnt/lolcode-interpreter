@@ -19,24 +19,12 @@ public class Parser
         this.tokens = tokens;
     }
 
-    public List<Stmt> Parse()
+    public Stmt Parse()
     {
-        List<Stmt> statements = new();
+        if (!isType(BEGIN))
+            throw new ParsingException("Program must start with HAI", 1);
 
-        while (!atEOF())
-        {
-            try
-            {
-                statements.Add(statement());
-            }
-            catch (ParsingException e)
-            {
-                ExceptionReporter.Log(e);
-                synchronize();
-            }
-        }
-
-        return statements;
+        return statement();
     }
 
     // parsing helpers
@@ -85,7 +73,29 @@ public class Parser
     // statement parser
     Stmt statement()
     {
-        if (skipNextType(DECLARE_VAR))
+        if (skipNextType(BEGIN)) // program
+        {
+            expect(COMMAND_TERMINATOR);
+            List<Stmt> statements = new();
+
+            while (!isType(END, EOF))
+            {
+                try
+                {
+                    statements.Add(statement());
+                }
+                catch (ParsingException e)
+                {
+                    ExceptionReporter.Log(e);
+                    synchronize();
+                }
+            }
+            expect(END);
+
+            return new BlockStmt(statements.ToArray());
+        }
+
+        if (skipNextType(DECLARE_VAR)) // variable declaration
         {
             Token identifier = expect(T_IDENTIFIER);
             Token type;
@@ -111,7 +121,7 @@ public class Parser
             return new VariableDeclareStmt(identifier);
         }
 
-        if (skipNextType(WRITE_STDOUT))
+        if (skipNextType(WRITE_STDOUT)) // printing
         {
             List<Expr> content = new();
 
@@ -126,21 +136,28 @@ public class Parser
             return new PrintStmt(newline, content.ToArray());
         }
 
-        if (skipNextType(READ_STDIN))
+        if (skipNextType(READ_STDIN)) // reading input
         {
             Token identifier = expect(T_IDENTIFIER);
             expect(EOF, COMMAND_TERMINATOR);
             return new InputStmt(identifier);
         }
 
-        if (isType(T_IDENTIFIER))
+        if (isType(T_IDENTIFIER)) // assigning variable values
         {
-            Token identifier = consumeNext();
+            Token identifier = consumeNext(); //TODO: test this! will it break expression-stmt?
+
             if (skipNextType(ASSIGN))
-                return new VariableAssignStmt(identifier, expression());
+            {
+                Expr right = expression();
+                expect(EOF, COMMAND_TERMINATOR);
+                return new VariableAssignStmt(identifier, right);
+            }
+            else
+                --next; // roll back and let expr statement handle it
         }
 
-        Expr expr = expression();
+        Expr expr = expression(); // expression-statements
         expect(EOF, COMMAND_TERMINATOR);
         return new ExpressionStmt(expr);
     }

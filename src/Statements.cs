@@ -107,6 +107,24 @@ public class InputStmt : Stmt
     }
 }
 
+public class BlockStmt : Stmt
+{
+    Stmt[] statements;
+
+    public BlockStmt(Stmt[] statements)
+    {
+        this.statements = statements;
+    }
+
+    public void evaluate(Scope scope)
+    {
+        Scope localScope = new(scope);
+
+        foreach (Stmt s in statements)
+            s.evaluate(localScope);
+    }
+}
+
 public class ExpressionStmt : Stmt
 {
     Expr expression;
