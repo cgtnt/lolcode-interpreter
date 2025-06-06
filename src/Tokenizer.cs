@@ -179,7 +179,7 @@ public class Tokenizer
     public static Dictionary<string, TokenType> keywords = new Dictionary<string, TokenType>
     {
         { "HAI", BEGIN },
-        { "KTHX", END },
+        { "KTHXBYE", END },
         { "IT", TEMP },
         { "I HAS A", DECLARE_VAR },
         { "ITZ", DECLARE_SET_VAR },

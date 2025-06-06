@@ -11,7 +11,7 @@ public class Interpreter
     {
         try
         {
-            statement.evaluate(programScope);
+            statement.evaluate(programScope); // TODO: make sure line of runtime exceptions is printed
         }
         catch (RuntimeException e)
         {

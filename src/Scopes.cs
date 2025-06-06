@@ -50,6 +50,18 @@ public class Scope
         }
     }
 
+    public void SetOrDefineVar(string name, Value value)
+    {
+        try
+        {
+            SetVar(name, value);
+        }
+        catch (UninitializedVarExcetion)
+        {
+            DefineVar(name, value);
+        }
+    }
+
     public Value GetVar(string name)
     {
         if (variables.TryGetValue(name, out Value? variable))

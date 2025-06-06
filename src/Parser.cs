@@ -20,6 +20,9 @@ public class Parser
 
     public bool Parse(out Stmt program)
     {
+        while (isType(COMMAND_TERMINATOR))
+            ++next;
+
         if (!isType(BEGIN))
         {
             executable = false;
@@ -104,6 +107,28 @@ public class Parser
         if (skipNextType(BEGIN)) // program
         {
             return blockStatement(END);
+        }
+
+        if (skipNextType(IF)) // if statement
+        {
+            expect(COMMAND_TERMINATOR);
+            expect(THEN);
+            BlockStmt trueBlock = blockStatement(ELSE);
+            BlockStmt falseBlock = blockStatement(END_IF);
+            expect(COMMAND_TERMINATOR, EOF);
+
+            return new IfStmt(trueBlock, falseBlock);
+        }
+
+        if (skipNextType(LOOP_BEGIN)) // loop statement
+        {
+            Token variable = expect(T_IDENTIFIER);
+            expect(WHILE);
+            Expr condition = expression();
+            BlockStmt block = blockStatement(LOOP_END);
+            expect(COMMAND_TERMINATOR);
+
+            return new LoopStmt(block, condition, variable);
         }
 
         if (skipNextType(DECLARE_VAR)) // variable declaration

@@ -12,6 +12,7 @@ public interface Stmt
     public void evaluate(Scope scope);
 }
 
+// variable handling statements
 public class VariableDeclareStmt : Stmt
 {
     Token identifier;
@@ -67,6 +68,7 @@ public class VariableAssignStmt : Stmt
     }
 }
 
+// I/O statements
 public class PrintStmt : Stmt
 {
     Expr[] content;
@@ -105,10 +107,63 @@ public class InputStmt : Stmt
     {
         string? input = Console.ReadLine();
         StringValue value = new StringValue(input is not null ? input : "");
-        scope.SetVar(identifier.text, value);
+        scope.SetOrDefineVar(identifier.text, value);
     }
 }
 
+// control flow statements
+public class IfStmt : Stmt
+{
+    BlockStmt trueBlock;
+    BlockStmt falseBlock;
+
+    public IfStmt(BlockStmt trueBlock, BlockStmt falseBlock)
+    {
+        this.trueBlock = trueBlock;
+        this.falseBlock = falseBlock;
+    }
+
+    public void evaluate(Scope scope)
+    { // if-else operates on the implict variable IT
+        Value condition = scope.GetVar("IT");
+        bool outcome = TypeCaster.TryCastBool(condition).Value;
+
+        if (outcome)
+            trueBlock.evaluate(scope);
+        else
+            falseBlock.evaluate(scope);
+    }
+}
+
+public class LoopStmt : Stmt
+{
+    BlockStmt block;
+    Expr condition;
+    Token variable;
+
+    public LoopStmt(BlockStmt block, Expr condition, Token variable)
+    {
+        this.block = block;
+        this.condition = condition;
+        this.variable = variable;
+    }
+
+    public void evaluate(Scope scope)
+    {
+        Scope localScope = new Scope(scope);
+
+        localScope.DefineVar(variable.text, new UntypedValue());
+
+        while (TypeCaster.TryCastBool(condition.evaluate(localScope)).Value)
+        {
+            block.evaluate(localScope);
+        }
+    }
+}
+
+// function statements
+
+// auxiliary statements
 public class BlockStmt : Stmt
 {
     Stmt[] statements;
