@@ -13,37 +13,38 @@ public class Parser
 {
     List<Token> tokens;
     int next;
+    bool executable = true;
 
     public Parser(List<Token> tokens)
     {
         this.tokens = tokens;
     }
 
-    public Stmt Parse()
+    public bool Parse(out Stmt program)
     {
         if (!isType(BEGIN))
-            throw new ParsingException("Program must start with HAI", 1);
+        {
+            executable = false;
+            ExceptionReporter.Log(new ParsingException("Program must start with HAI", 1));
+            synchronize();
+        }
 
-        return statement();
+        program = statement();
+        return executable;
     }
 
     // parsing helpers
-    Token consumeNext()
+    Token consumeNext() // TODO: change to arrow notation
     {
         Debug.Log($"Consuming: {tokens[next]}");
         return tokens[next++];
     }
 
-    Token expect(params TokenType[] types)
-    {
-        if (isType(types))
-            return consumeNext();
-        else
-            throw new ParsingException(
-                $"Expected tokens: {string.Join("", types)}",
-                peekNext().line
-            );
-    }
+    Token peekNext() => tokens[next];
+
+    bool atEOF() => tokens[next].type == EOF;
+
+    bool isType(params TokenType[] types) => types.Any(t => peekNext().type == t);
 
     bool skipNextType(params TokenType[] types)
     {
@@ -56,11 +57,16 @@ public class Parser
         return false;
     }
 
-    Token peekNext() => tokens[next];
-
-    bool isType(params TokenType[] types) => types.Any(t => peekNext().type == t);
-
-    bool atEOF() => tokens[next].type == EOF;
+    Token expect(params TokenType[] types)
+    {
+        if (isType(types))
+            return consumeNext();
+        else
+            throw new ParsingException(
+                $"Expected tokens: {string.Join(", ", types)}",
+                peekNext().line
+            );
+    }
 
     void synchronize()
     {
@@ -70,29 +76,36 @@ public class Parser
         consumeNext();
     }
 
+    // statement parsing helpers
+    BlockStmt blockStatement(TokenType end)
+    {
+        expect(COMMAND_TERMINATOR);
+        List<Stmt> statements = new();
+
+        while (!isType(end, EOF))
+        {
+            try
+            {
+                statements.Add(statement());
+            }
+            catch (ParsingException e)
+            {
+                ExceptionReporter.Log(e);
+                executable = false;
+                synchronize();
+            }
+        }
+        expect(end);
+
+        return new BlockStmt(statements.ToArray());
+    }
+
     // statement parser
     Stmt statement()
     {
         if (skipNextType(BEGIN)) // program
         {
-            expect(COMMAND_TERMINATOR);
-            List<Stmt> statements = new();
-
-            while (!isType(END, EOF))
-            {
-                try
-                {
-                    statements.Add(statement());
-                }
-                catch (ParsingException e)
-                {
-                    ExceptionReporter.Log(e);
-                    synchronize();
-                }
-            }
-            expect(END);
-
-            return new BlockStmt(statements.ToArray());
+            return blockStatement(END);
         }
 
         if (skipNextType(DECLARE_VAR)) // variable declaration
@@ -160,6 +173,28 @@ public class Parser
         Expr expr = expression(); // expression-statements
         expect(EOF, COMMAND_TERMINATOR);
         return new ExpressionStmt(expr);
+    }
+
+    // expression parsing helpers
+    Expr naryExpr()
+    {
+        Token op = (consumeNext());
+        Expr expr = expression();
+
+        while (!isType(END_INF, EOF, COMMAND_TERMINATOR))
+        {
+            expr = new BinaryExpr(op, expr, expression());
+        }
+
+        if (isType(END_INF))
+        {
+            consumeNext();
+            return expr;
+        }
+        else
+        {
+            throw new ParsingException($"Expected 'MKAY' to terminate {op.text}", op.line);
+        }
     }
 
     //  expression parser
@@ -230,26 +265,5 @@ public class Parser
             $"Invalid expression, unexpected token {invalid.text}",
             invalid.line
         );
-    }
-
-    Expr naryExpr()
-    {
-        Token op = (consumeNext());
-        Expr expr = expression();
-
-        while (!isType(END_INF, EOF, COMMAND_TERMINATOR))
-        {
-            expr = new BinaryExpr(op, expr, expression());
-        }
-
-        if (isType(END_INF))
-        {
-            consumeNext();
-            return expr;
-        }
-        else
-        {
-            throw new ParsingException($"Expected 'MKAY' to terminate {op.text}", op.line);
-        }
     }
 }

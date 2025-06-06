@@ -43,10 +43,13 @@ class Program
             //Debug.Log(string.Join('-', tokens));
 
             Parser parser = new(tokens);
-            Stmt program = parser.Parse();
+            bool execute = parser.Parse(out Stmt program);
 
-            Interpreter interpreter = new();
-            interpreter.Interpret(program);
+            if (execute)
+            {
+                Interpreter interpreter = new();
+                interpreter.Interpret(program);
+            }
         }
         catch (Exception e)
         {

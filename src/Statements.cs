@@ -81,7 +81,10 @@ public class PrintStmt : Stmt
 
     public void evaluate(Scope scope)
     {
-        string result = string.Join("", content.Select(e => e.evaluate(scope)));
+        string result = string.Join(
+            "",
+            content.Select(e => TypeCaster.TryCastString(e.evaluate(scope)))
+        );
 
         if (newline)
             Console.WriteLine(result);
