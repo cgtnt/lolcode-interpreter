@@ -1,12 +1,11 @@
 using System;
 using System.Linq;
-using ExpressionDefinitions;
 using ScopeDefinition;
 using Tokenization;
-using TypeDefinitions;
+using TypePrimitives;
 using static Tokenization.TokenType;
 
-namespace StatementDefinitions;
+namespace ParsingPrimitives;
 
 public interface Stmt
 {

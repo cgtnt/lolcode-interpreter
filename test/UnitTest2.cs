@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using FileUtils;
 using Lexing;
+using PreprocessingUtils;
 using Tokenization;
 
 namespace Testing;
@@ -12,13 +12,16 @@ public class TokenizerTests
 
     private void AssertTokenize(string filepath)
     {
-        Lexer lexer = new(Utils.loadSoureCode(filepath));
+        Lexer lexer = new(PreprocessingUtils.Utils.loadSoureCode(filepath));
         List<string> lexemes = lexer.Lex();
 
         Tokenizer tokenizer = new(lexemes.ToArray());
         List<Token> result = tokenizer.Tokenize();
 
-        Assert.AreEqual(string.Join('-', result), Utils.loadSoureCode($"{filepath}.tokenizer.out"));
+        Assert.AreEqual(
+            string.Join('-', result),
+            PreprocessingUtils.Utils.loadSoureCode($"{filepath}.tokenizer.out")
+        );
     }
 
     [DataTestMethod]

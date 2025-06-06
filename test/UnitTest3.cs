@@ -1,8 +1,6 @@
-using System.Collections.Generic;
-using ExpressionDefinitions;
-using FileUtils;
 using Lexing;
 using Parsing;
+using ParsingPrimitives;
 using Tokenization;
 
 namespace Testing;
@@ -14,7 +12,7 @@ public class ParserExpressionTests
 
     private void AssertParse(string filepath)
     {
-        Lexer lexer = new(Utils.loadSoureCode(filepath));
+        Lexer lexer = new(PreprocessingUtils.Utils.loadSoureCode(filepath));
         List<string> lexemes = lexer.Lex();
 
         Tokenizer tokenizer = new(lexemes.ToArray());

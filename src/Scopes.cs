@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using EvaluationUtils;
-using TypeDefinitions;
+using TypePrimitives;
 
 namespace ScopeDefinition;
 

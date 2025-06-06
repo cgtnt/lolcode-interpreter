@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using ExpressionDefinitions;
-using FileUtils;
 using Interpretation;
 using Lexing;
 using Parsing;
-using StatementDefinitions;
+using ParsingPrimitives;
 using Tokenization;
 
 class Program
@@ -21,7 +19,7 @@ class Program
     {
         try
         {
-            string sourceCode = Utils.loadSoureCode(file);
+            string sourceCode = PreprocessingUtils.Utils.loadSoureCode(file);
             Process(sourceCode);
         }
         catch (Exception e)

@@ -2,11 +2,11 @@ using System;
 using EvaluationUtils;
 using ScopeDefinition;
 using Tokenization;
-using TypeDefinitions;
+using TypePrimitives;
 using static EvaluationUtils.EvalUtils;
 using static Tokenization.TokenType;
 
-namespace ExpressionDefinitions;
+namespace ParsingPrimitives;
 
 public interface Expr
 {

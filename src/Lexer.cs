@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using CharChecking;
+using LexicalUtils;
 
 namespace Lexing;
 

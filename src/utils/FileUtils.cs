@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace FileUtils;
+namespace PreprocessingUtils;
 
 public class Utils
 {

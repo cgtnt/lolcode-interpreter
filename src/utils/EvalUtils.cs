@@ -1,7 +1,6 @@
 using System;
-using System.Numerics;
 using Tokenization;
-using TypeDefinitions;
+using TypePrimitives;
 
 namespace EvaluationUtils;
 
@@ -17,6 +16,23 @@ public enum OperationType
     BOOLEAN,
     STRING,
     UNIVERSAL,
+}
+
+public class TypeChecker
+{
+    public static bool Equals(Type one, Type two)
+    {
+        return one == two;
+    }
+
+    public static bool Matches(Type one, Type[] targets)
+    {
+        foreach (Type t in targets)
+            if (one == t)
+                return true;
+
+        return false;
+    }
 }
 
 public static class EvalUtils

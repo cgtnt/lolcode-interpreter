@@ -1,4 +1,4 @@
-namespace CharChecking;
+namespace LexicalUtils;
 
 public class CharChecker
 {

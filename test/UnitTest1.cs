@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using FileUtils;
 using Lexing;
+using PreprocessingUtils;
 
 namespace Testing;
 
@@ -11,7 +11,7 @@ public class LexerTests
 
     private void AssertLex(string filepath)
     {
-        Lexer lexer = new(Utils.loadSoureCode(filepath));
+        Lexer lexer = new(PreprocessingUtils.Utils.loadSoureCode(filepath));
         List<string> result = lexer.Lex();
 
         Assert.AreEqual(string.Join('-', result), File.ReadAllText($"{filepath}.lexer.out"));
@@ -32,7 +32,7 @@ public class LexerTests
     {
         string filename = $"../../../{TEST_DATA_DIR}/ex2"; //TODO: fix path
 
-        Lexer lexer = new(Utils.loadSoureCode(filename));
+        Lexer lexer = new(PreprocessingUtils.Utils.loadSoureCode(filename));
         Assert.ThrowsException<SyntaxException>(lexer.Lex);
     }
 }

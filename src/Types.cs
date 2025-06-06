@@ -1,4 +1,4 @@
-namespace TypeDefinitions;
+namespace TypePrimitives;
 
 public abstract record Value
 {
