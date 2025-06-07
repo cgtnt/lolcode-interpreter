@@ -1,3 +1,4 @@
+using System;
 using ParsingPrimitives;
 
 namespace TypePrimitives;
@@ -55,7 +56,7 @@ public record FunctionValue(BlockStmt block, string[] parameters) : Value
 public static class TypeCaster
 {
     // https://github.com/justinmeza/lolcode-spec/blob/master/v1.3/lolcode-spec-v1.3.md#types
-    public static BoolValue TryCastBool(Value value)
+    public static BoolValue CastBool(Value value)
     {
         switch (value)
         {
@@ -74,7 +75,7 @@ public static class TypeCaster
         }
     }
 
-    public static IntValue TryCastInt(Value value)
+    public static IntValue CastInt(Value value)
     {
         switch (value)
         {
@@ -94,7 +95,7 @@ public static class TypeCaster
         }
     }
 
-    public static FloatValue TryCastFloat(Value value)
+    public static FloatValue CastFloat(Value value)
     {
         switch (value)
         {
@@ -114,7 +115,7 @@ public static class TypeCaster
         }
     }
 
-    public static StringValue TryCastString(Value value)
+    public static StringValue CastString(Value value)
     {
         switch (value)
         {
@@ -129,5 +130,22 @@ public static class TypeCaster
             default:
                 throw new InvalidTypeException();
         }
+    }
+}
+
+public class TypeChecker
+{
+    public static bool Equals(Type one, Type two)
+    {
+        return one == two;
+    }
+
+    public static bool Matches(Type one, Type[] targets)
+    {
+        foreach (Type t in targets)
+            if (one == t)
+                return true;
+
+        return false;
     }
 }

@@ -101,7 +101,7 @@ public class Tokenizer
             string candidate = string.Join(" ", lexemeBuffer.Take(bufferNext));
 
             if (keywords.TryGetValue(candidate, out TokenType potential_type))
-            { // TODO: Change this and keywords to have list of lexems instad of string?
+            {
                 if (bufferNext > longestMatchLength)
                 {
                     longestMatchLength = bufferNext;

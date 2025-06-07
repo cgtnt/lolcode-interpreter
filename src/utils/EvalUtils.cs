@@ -18,23 +18,6 @@ public enum OperationType
     UNIVERSAL,
 }
 
-public class TypeChecker
-{
-    public static bool Equals(Type one, Type two)
-    {
-        return one == two;
-    }
-
-    public static bool Matches(Type one, Type[] targets)
-    {
-        foreach (Type t in targets)
-            if (one == t)
-                return true;
-
-        return false;
-    }
-}
-
 public static class EvalUtils
 {
     public static Value TryExecuteOp(
@@ -74,7 +57,7 @@ public static class EvalUtils
         {
             (IntValue one, IntValue two) => new IntValue(intOp(one.Value, two.Value)),
             _ => new FloatValue(
-                floatOp(TypeCaster.TryCastFloat(first).Value, TypeCaster.TryCastFloat(second).Value)
+                floatOp(TypeCaster.CastFloat(first).Value, TypeCaster.CastFloat(second).Value)
             ),
         };
     }
@@ -85,10 +68,7 @@ public static class EvalUtils
             (first, second) switch
             {
                 (BoolValue one, BoolValue two) => boolOp(one.Value, two.Value),
-                _ => boolOp(
-                    TypeCaster.TryCastBool(first).Value,
-                    TypeCaster.TryCastBool(second).Value
-                ),
+                _ => boolOp(TypeCaster.CastBool(first).Value, TypeCaster.CastBool(second).Value),
             }
         );
     }
@@ -100,8 +80,8 @@ public static class EvalUtils
             {
                 (StringValue one, StringValue two) => stringOp(one.Value, two.Value),
                 _ => stringOp(
-                    TypeCaster.TryCastString(first).Value,
-                    TypeCaster.TryCastString(second).Value
+                    TypeCaster.CastString(first).Value,
+                    TypeCaster.CastString(second).Value
                 ),
             }
         );

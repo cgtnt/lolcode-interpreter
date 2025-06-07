@@ -86,7 +86,7 @@ public class PrintStmt : Stmt
     {
         string result = string.Join(
             "",
-            content.Select(e => TypeCaster.TryCastString(e.evaluate(scope)))
+            content.Select(e => TypeCaster.CastString(e.evaluate(scope)))
         );
 
         if (newline)
@@ -128,7 +128,7 @@ public class IfStmt : Stmt
     public void evaluate(Scope scope)
     { // if-else operates on the implict variable IT
         Value condition = scope.GetVar("IT");
-        bool outcome = TypeCaster.TryCastBool(condition).Value;
+        bool outcome = TypeCaster.CastBool(condition).Value;
 
         if (outcome)
             trueBlock.evaluate(new Scope(scope));
@@ -156,7 +156,7 @@ public class LoopStmt : Stmt
 
         variable.evaluate(localScope);
 
-        while (TypeCaster.TryCastBool(condition.evaluate(localScope)).Value)
+        while (TypeCaster.CastBool(condition.evaluate(localScope)).Value)
         {
             block.evaluate(localScope);
         }
