@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using ParsingPrimitives;
-using Tokenization;
+using TokenizationPrimitives;
 using TypePrimitives;
-using static Tokenization.TokenType;
+using static TokenizationPrimitives.TokenType;
 
 namespace Parsing;
 

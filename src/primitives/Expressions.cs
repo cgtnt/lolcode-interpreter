@@ -1,10 +1,10 @@
 using System;
 using EvaluationUtils;
-using ScopeDefinition;
-using Tokenization;
+using InterpretationPrimitives;
+using TokenizationPrimitives;
 using TypePrimitives;
 using static EvaluationUtils.EvalUtils;
-using static Tokenization.TokenType;
+using static TokenizationPrimitives.TokenType;
 
 namespace ParsingPrimitives;
 

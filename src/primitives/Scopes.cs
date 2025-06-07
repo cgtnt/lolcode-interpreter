@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using EvaluationUtils;
 using TypePrimitives;
 
-namespace ScopeDefinition;
+namespace InterpretationPrimitives;
 
 public class Scope
 {

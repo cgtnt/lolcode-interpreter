@@ -1,5 +1,5 @@
 using System;
-using Tokenization;
+using TokenizationPrimitives;
 using TypePrimitives;
 
 namespace EvaluationUtils;

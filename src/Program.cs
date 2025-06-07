@@ -5,6 +5,7 @@ using Lexing;
 using Parsing;
 using ParsingPrimitives;
 using Tokenization;
+using TokenizationPrimitives;
 
 class Program
 {

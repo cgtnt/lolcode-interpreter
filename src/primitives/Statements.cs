@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
-using ScopeDefinition;
-using Tokenization;
+using InterpretationPrimitives;
+using TokenizationPrimitives;
 using TypePrimitives;
-using static Tokenization.TokenType;
+using static TokenizationPrimitives.TokenType;
 
 namespace ParsingPrimitives;
 
@@ -15,13 +15,15 @@ public interface Stmt
 // variable handling statements
 public class VariableDeclareStmt : Stmt
 {
-    Token identifier;
+    string identifier;
+    int line;
     Expr? value;
     TokenType? type;
 
     public VariableDeclareStmt(Token identifier, TokenType? type = null, Expr? value = null)
     {
-        this.identifier = identifier;
+        this.identifier = identifier.text;
+        this.line = identifier.line;
         this.value = value;
         this.type = type;
     }
@@ -29,10 +31,10 @@ public class VariableDeclareStmt : Stmt
     public void evaluate(Scope scope)
     {
         if (type is null && value is not null)
-            scope.DefineVar(identifier.text, value.evaluate(scope));
+            scope.DefineVar(identifier, value.evaluate(scope));
         else if (type is not null && value is null)
             scope.DefineVar(
-                identifier.text,
+                identifier,
                 type switch
                 {
                     TI_STRING => new StringValue(),
@@ -41,30 +43,30 @@ public class VariableDeclareStmt : Stmt
                     TI_INT => new IntValue(),
                     TI_UNTYPED => new UntypedValue(),
                     _ => throw new InvalidTypeException(
-                        $"Cannot declare variable of type {identifier.text}",
-                        identifier.line
+                        $"Cannot declare variable of type {identifier}",
+                        line
                     ),
                 }
             );
         else if (type is null && value is null)
-            scope.DefineVar(identifier.text, new UntypedValue());
+            scope.DefineVar(identifier, new UntypedValue());
     }
 }
 
 public class VariableAssignStmt : Stmt
 {
-    Token identifier;
+    string identifier;
     Expr value;
 
     public VariableAssignStmt(Token identifier, Expr value)
     {
-        this.identifier = identifier;
+        this.identifier = identifier.text;
         this.value = value;
     }
 
     public void evaluate(Scope scope)
     {
-        scope.SetVar(identifier.text, value.evaluate(scope));
+        scope.SetVar(identifier, value.evaluate(scope));
     }
 }
 
@@ -96,18 +98,18 @@ public class PrintStmt : Stmt
 
 public class InputStmt : Stmt
 {
-    Token identifier;
+    string identifier;
 
     public InputStmt(Token identifier)
     {
-        this.identifier = identifier;
+        this.identifier = identifier.text;
     }
 
     public void evaluate(Scope scope)
     {
         string? input = Console.ReadLine();
         StringValue value = new StringValue(input is not null ? input : "");
-        scope.SetOrDefineVar(identifier.text, value);
+        scope.SetOrDefineVar(identifier, value);
     }
 }
 
@@ -162,6 +164,61 @@ public class LoopStmt : Stmt
 }
 
 // function statements
+public class FunctionDeclareStmt : Stmt
+{
+    string name;
+    BlockStmt block;
+    Token[] parameters;
+
+    public FunctionDeclareStmt(Token name, BlockStmt block, Token[] parameters)
+    {
+        this.name = name.text;
+        this.block = block;
+        this.parameters = parameters;
+    }
+
+    public void evaluate(Scope scope)
+    {
+        FunctionValue function = new(block, parameters.Select(a => a.text).ToArray());
+
+        scope.DefineVar(name, function);
+    }
+}
+
+public class FunctionCallStmt : Stmt
+{
+    string identifier;
+    int line;
+    Expr[] arguments;
+
+    public FunctionCallStmt(Token identifier, Expr[] arguments)
+    {
+        this.identifier = identifier.text;
+        this.line = identifier.line;
+        this.arguments = arguments;
+    }
+
+    public void evaluate(Scope scope)
+    {
+        FunctionValue? function = scope.GetVar(identifier) as FunctionValue;
+
+        if (function is null)
+            throw new InvalidTypeException($"Cannot call {identifier}, not a function", line);
+
+        Scope localScope = new Scope(scope);
+
+        if (function.ParametersCount != arguments.Length)
+            throw new SyntaxException(
+                $"Invalid number of arguments provided to {identifier}",
+                line
+            );
+
+        for (int i = 0; i < function.ParametersCount; ++i)
+            localScope.DefineVar(function.parameters[i], arguments[i].evaluate(scope));
+
+        function.block.evaluate(localScope);
+    }
+}
 
 // auxiliary statements
 public class BlockStmt : Stmt

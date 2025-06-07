@@ -57,8 +57,10 @@ I HAS A var ITZ 0  BTW Throws an error AS var is already taken
 var R 0 BTW FUNIKSHUN var no longer exists, it's now NUMBR-0
 
 ### Terminal I/O
+```
 VISIBLE <expression> [<expression> ...][!]  BTW print
 GIMMEH <variable>  BTW input - takes in YARN
+```
 
 ### EXPRESSION STATEMENTS 
 A bare expression (e.g. a function call or math operation), without any assignment, is a legal statement in LOLCODE. Aside from any side-effects from the expression when evaluated, the final value is placed in the temporary variable IT. IT's value remains in local scope and exists until the next time it is replaced with a bare expression.

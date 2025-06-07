@@ -28,3 +28,5 @@ IM IN YR <variable declaration>, WILE <expression>
 IM OUTTA YR 
 ```
 Where ```<variable declaration>``` is a variable declaration statement, with TYPE or VALUE of variable specified. The variable will be declared in the local scope of the loop. 
+
+### Functions

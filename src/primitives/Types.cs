@@ -1,3 +1,5 @@
+using ParsingPrimitives;
+
 namespace TypePrimitives;
 
 public abstract record Value
@@ -5,6 +7,7 @@ public abstract record Value
     public abstract object? RawValue { get; }
 }
 
+// types
 public record IntValue(int Value = 0) : Value
 {
     public override object RawValue => Value;
@@ -38,6 +41,14 @@ public record UntypedValue() : Value
     public override object? RawValue => null;
 
     public override string ToString() => "NOOB";
+}
+
+// function type
+public record FunctionValue(BlockStmt block, string[] parameters) : Value
+{
+    public override object RawValue => $"function({string.Join(", ", parameters)})";
+
+    public int ParametersCount => parameters.Length;
 }
 
 // implicit type casting
