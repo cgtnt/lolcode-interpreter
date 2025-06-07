@@ -30,3 +30,4 @@ IM OUTTA YR
 Where ```<variable declaration>``` is a variable declaration statement, with TYPE or VALUE of variable specified. The variable will be declared in the local scope of the loop. 
 
 ### Functions
+Function definition and calls are treated as specified in the [original specification](https://github.com/justinmeza/lolcode-spec/blob/master/v1.3/lolcode-spec-v1.3.md#functions).
