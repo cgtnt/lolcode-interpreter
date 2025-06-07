@@ -129,9 +129,9 @@ public class IfStmt : Stmt
         bool outcome = TypeCaster.TryCastBool(condition).Value;
 
         if (outcome)
-            trueBlock.evaluate(scope);
+            trueBlock.evaluate(new Scope(scope));
         else
-            falseBlock.evaluate(scope);
+            falseBlock.evaluate(new Scope(scope));
     }
 }
 
@@ -152,7 +152,7 @@ public class LoopStmt : Stmt
     {
         Scope localScope = new Scope(scope);
 
-        localScope.DefineVar(variable.text, new UntypedValue());
+        localScope.DefineVar(variable.text, new UntypedValue()); // FIXME: count type is unintialized, fails on expr comparison beow
 
         while (TypeCaster.TryCastBool(condition.evaluate(localScope)).Value)
         {
@@ -175,10 +175,8 @@ public class BlockStmt : Stmt
 
     public void evaluate(Scope scope)
     {
-        Scope localScope = new(scope);
-
         foreach (Stmt s in statements)
-            s.evaluate(localScope);
+            s.evaluate(scope);
     }
 }
 

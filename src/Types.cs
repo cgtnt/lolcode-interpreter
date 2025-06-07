@@ -69,6 +69,8 @@ public static class TypeCaster
         {
             case IntValue v:
                 return v;
+            case UntypedValue v:
+                return new IntValue();
             case StringValue v:
                 if (int.TryParse(v.Value, out int val))
                     return new IntValue(val);
@@ -89,6 +91,8 @@ public static class TypeCaster
         {
             case FloatValue v:
                 return v;
+            case UntypedValue v:
+                return new FloatValue();
             case StringValue v:
                 if (float.TryParse(v.Value, out float val))
                     return new FloatValue(val);
@@ -109,6 +113,8 @@ public static class TypeCaster
         {
             case StringValue v:
                 return v;
+            case UntypedValue v:
+                return new StringValue();
             case IntValue v:
                 return new StringValue(v.Value.ToString());
             case FloatValue v:
