@@ -5,7 +5,7 @@ using TokenizationPrimitives;
 using TypePrimitives;
 using static TokenizationPrimitives.TokenType;
 
-namespace ParsingPrimitives;
+namespace ASTPrimitives;
 
 public interface Stmt
 {
@@ -15,58 +15,73 @@ public interface Stmt
 // variable handling statements
 public class VariableDeclareStmt : Stmt
 {
-    string identifier;
+    string name;
     int line;
     Expr? value;
     TokenType? type;
 
     public VariableDeclareStmt(Token identifier, TokenType? type = null, Expr? value = null)
     {
-        this.identifier = identifier.text;
-        this.line = identifier.line;
+        name = identifier.text;
+        line = identifier.line;
         this.value = value;
         this.type = type;
     }
 
     public void evaluate(Scope scope)
     {
-        if (type is null && value is not null)
-            scope.DefineVar(identifier, value.evaluate(scope));
-        else if (type is not null && value is null)
-            scope.DefineVar(
-                identifier,
-                type switch
-                {
-                    TI_STRING => new StringValue(),
-                    TI_BOOL => new BoolValue(),
-                    TI_FLOAT => new FloatValue(),
-                    TI_INT => new IntValue(),
-                    TI_UNTYPED => new UntypedValue(),
-                    _ => throw new InvalidTypeException(
-                        $"Cannot declare variable of type {identifier}",
-                        line
-                    ),
-                }
-            );
-        else if (type is null && value is null)
-            scope.DefineVar(identifier, new UntypedValue());
+        try
+        {
+            if (type is null && value is not null)
+                scope.DefineVar(name, value.evaluate(scope));
+            else if (type is not null && value is null)
+                scope.DefineVar(
+                    name,
+                    type switch
+                    {
+                        TI_STRING => new StringValue(),
+                        TI_BOOL => new BoolValue(),
+                        TI_FLOAT => new FloatValue(),
+                        TI_INT => new IntValue(),
+                        TI_UNTYPED => new UntypedValue(),
+                        _ => throw new InvalidTypeException(
+                            $"Cannot declare variable of type {name}"
+                        ),
+                    }
+                );
+            else if (type is null && value is null)
+                scope.DefineVar(name, new UntypedValue());
+        }
+        catch (RuntimeException e)
+        {
+            throw new RuntimeException(e.Message, line);
+        }
     }
 }
 
 public class VariableAssignStmt : Stmt
 {
-    string identifier;
+    string name;
+    int line;
     Expr value;
 
     public VariableAssignStmt(Token identifier, Expr value)
     {
-        this.identifier = identifier.text;
+        name = identifier.text;
+        line = identifier.line;
         this.value = value;
     }
 
     public void evaluate(Scope scope)
     {
-        scope.SetVar(identifier, value.evaluate(scope));
+        try
+        {
+            scope.SetVar(name, value.evaluate(scope));
+        }
+        catch (RuntimeException e)
+        {
+            throw new RuntimeException(e.Message, line);
+        }
     }
 }
 
@@ -75,41 +90,60 @@ public class PrintStmt : Stmt
 {
     Expr[] content;
     bool newline;
+    int line;
 
-    public PrintStmt(bool newline, params Expr[] content)
+    public PrintStmt(bool newline, int line, params Expr[] content)
     {
         this.newline = newline;
         this.content = content;
+        this.line = line;
     }
 
     public void evaluate(Scope scope)
     {
-        string result = string.Join(
-            "",
-            content.Select(e => TypeCaster.CastString(e.evaluate(scope)))
-        );
+        try
+        {
+            string[] resultLiterals = content
+                .Select(e => TypeCaster.CastString(e.evaluate(scope)).Value)
+                .ToArray();
 
-        if (newline)
-            Console.WriteLine(result);
-        else
-            Console.Write(result);
+            string result = string.Join("", resultLiterals);
+
+            if (newline)
+                Console.WriteLine(result);
+            else
+                Console.Write(result);
+        }
+        catch (RuntimeException e)
+        {
+            throw new RuntimeException(e.Message, line);
+        }
     }
 }
 
 public class InputStmt : Stmt
 {
-    string identifier;
+    string name;
+    int line;
 
     public InputStmt(Token identifier)
     {
-        this.identifier = identifier.text;
+        name = identifier.text;
+        line = identifier.line;
     }
 
     public void evaluate(Scope scope)
     {
-        string? input = Console.ReadLine();
-        StringValue value = new StringValue(input is not null ? input : "");
-        scope.SetOrDefineVar(identifier, value);
+        try
+        {
+            string? input = Console.ReadLine();
+            StringValue value = new StringValue(input is not null ? input : "");
+            scope.SetOrDefineVar(name, value);
+        }
+        catch (RuntimeException e)
+        {
+            throw new RuntimeException(e.Message, line);
+        }
     }
 }
 
@@ -167,12 +201,14 @@ public class LoopStmt : Stmt
 public class FunctionDeclareStmt : Stmt
 {
     string name;
+    int line;
     BlockStmt block;
     Token[] parameters;
 
-    public FunctionDeclareStmt(Token name, BlockStmt block, Token[] parameters)
+    public FunctionDeclareStmt(Token identifier, BlockStmt block, Token[] parameters)
     {
-        this.name = name.text;
+        name = identifier.text;
+        line = identifier.line;
         this.block = block;
         this.parameters = parameters;
     }
@@ -181,7 +217,14 @@ public class FunctionDeclareStmt : Stmt
     {
         FunctionValue function = new(block, parameters.Select(a => a.text).ToArray());
 
-        scope.DefineVar(name, function);
+        try
+        {
+            scope.DefineVar(name, function);
+        }
+        catch (RuntimeException e)
+        {
+            throw new RuntimeException(e.Message, line);
+        }
     }
 }
 

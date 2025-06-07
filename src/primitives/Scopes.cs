@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using EvaluationUtils;
 using TypePrimitives;
 
 namespace InterpretationPrimitives;
@@ -19,35 +18,28 @@ public class Scope
     public void DefineVar(string name, Value value)
     {
         if (variables.ContainsKey(name))
-            throw new RedefiningVarException();
+            throw new RedefiningVarException($"Cannot redefine variable {name}");
 
         variables.Add(name, value);
     }
 
     public void SetVar(string name, Value value)
     {
-        try
-        {
-            if (!variables.TryGetValue(name, out Value? current))
-                throw new UninitializedVarExcetion();
-
-            if (
-                TypeChecker.Equals(current.GetType(), value.GetType())
-                || current is UntypedValue
-                || name == "IT"
-            )
-                variables[name] = value;
-            else
-                throw new TypeCastingException(
-                    $"Cannot assign {value.RawValue}({value.GetType()}) to {name}({current.GetType()})"
-                );
-        }
-        catch (UninitializedVarExcetion)
-        {
+        if (!variables.TryGetValue(name, out Value? current))
             throw new UninitializedVarExcetion(
                 $"Cannot assign {value.RawValue}({value.GetType()}) to uninitiazlied variable {name}"
             );
-        }
+
+        if (
+            TypeChecker.Equals(current.GetType(), value.GetType())
+            || current is UntypedValue
+            || name == "IT"
+        )
+            variables[name] = value;
+        else
+            throw new TypeCastingException(
+                $"Cannot assign {value.RawValue}({value.GetType()}) to {name}({current.GetType()})"
+            );
     }
 
     public void SetOrDefineVar(string name, Value value)

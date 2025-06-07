@@ -6,7 +6,7 @@ using TypePrimitives;
 using static EvaluationUtils.EvalUtils;
 using static TokenizationPrimitives.TokenType;
 
-namespace ParsingPrimitives;
+namespace ASTPrimitives;
 
 public interface Expr
 {

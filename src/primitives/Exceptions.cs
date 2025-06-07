@@ -4,14 +4,14 @@ class ExceptionReporter
 {
     public static void Log(Exception e)
     {
-        Console.WriteLine(e.Message);
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.Error.WriteLine(e.Message);
+        Console.ForegroundColor = ConsoleColor.Gray;
     }
 }
 
 public class LineException : Exception
 {
-    public LineException() { }
-
     public LineException(string message, int line)
         : base($"Line {line}: {message}") { }
 
@@ -24,8 +24,6 @@ public class LineException : Exception
 
 public class RuntimeException : LineException
 {
-    public RuntimeException() { }
-
     public RuntimeException(string message, int line)
         : base(message, line) { }
 
@@ -41,18 +39,17 @@ public class SyntaxException : LineException
 
 public class ParsingException : LineException
 {
-    public ParsingException() { }
-
     public ParsingException(string message, int line)
         : base(message, line) { }
 }
 
 public class InvalidTypeException : RuntimeException
 {
-    public InvalidTypeException() { }
-
     public InvalidTypeException(string message, int line)
         : base(message, line) { }
+
+    public InvalidTypeException(string message)
+        : base(message) { }
 }
 
 public class InvalidOpException : RuntimeException
@@ -63,8 +60,6 @@ public class InvalidOpException : RuntimeException
 
 public class UninitializedVarExcetion : RuntimeException
 {
-    public UninitializedVarExcetion() { }
-
     public UninitializedVarExcetion(string message, int line)
         : base(message, line) { }
 
@@ -74,7 +69,8 @@ public class UninitializedVarExcetion : RuntimeException
 
 public class RedefiningVarException : RuntimeException
 {
-    public RedefiningVarException() { }
+    public RedefiningVarException(string message)
+        : base(message) { }
 
     public RedefiningVarException(string message, int line)
         : base(message, line) { }
@@ -82,8 +78,6 @@ public class RedefiningVarException : RuntimeException
 
 public class TypeCastingException : RuntimeException
 {
-    public TypeCastingException() { }
-
     public TypeCastingException(string message, int line)
         : base(message, line) { }
 

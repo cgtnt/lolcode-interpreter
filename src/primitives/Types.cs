@@ -1,5 +1,5 @@
 using System;
-using ParsingPrimitives;
+using ASTPrimitives;
 
 namespace TypePrimitives;
 
@@ -55,7 +55,6 @@ public record FunctionValue(BlockStmt block, string[] parameters) : Value
 // implicit type casting
 public static class TypeCaster
 {
-    // https://github.com/justinmeza/lolcode-spec/blob/master/v1.3/lolcode-spec-v1.3.md#types
     public static BoolValue CastBool(Value value)
     {
         switch (value)
@@ -71,7 +70,7 @@ public static class TypeCaster
             case FloatValue v:
                 return new BoolValue(v.Value != 0);
             default:
-                throw new InvalidTypeException();
+                throw new TypeCastingException($"Cannot cast {value.GetType()} to TROOF");
         }
     }
 
@@ -91,7 +90,7 @@ public static class TypeCaster
             case BoolValue v:
                 return new IntValue(v.Value ? 1 : 0);
             default:
-                throw new InvalidTypeException();
+                throw new TypeCastingException($"Cannot cast {value.GetType()} to NUMBR");
         }
     }
 
@@ -111,7 +110,7 @@ public static class TypeCaster
             case BoolValue v:
                 return new FloatValue(v.Value ? 1 : 0);
             default:
-                throw new InvalidTypeException();
+                throw new TypeCastingException($"Cannot cast {value.GetType()} to NUMBAR");
         }
     }
 
@@ -128,7 +127,7 @@ public static class TypeCaster
             case BoolValue v:
                 return new StringValue(v.Value ? "WIN" : "FAIL");
             default:
-                throw new InvalidTypeException();
+                throw new TypeCastingException($"Cannot cast {value.GetType()} to YARN");
         }
     }
 }

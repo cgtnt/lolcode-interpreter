@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using ParsingPrimitives;
+using ASTPrimitives;
 using TokenizationPrimitives;
 using TypePrimitives;
 using static TokenizationPrimitives.TokenType;
@@ -198,8 +198,9 @@ public class Parser
             return new VariableDeclareStmt(identifier);
         }
 
-        if (skipNextType(WRITE_STDOUT)) // printing
+        if (isType(WRITE_STDOUT)) // printing
         {
+            int line = consumeNext().line;
             List<Expr> content = new();
 
             while (!isType(EOF, COMMAND_TERMINATOR, BANG))
@@ -210,7 +211,7 @@ public class Parser
             bool newline = skipNextType(BANG);
             expect(EOF, COMMAND_TERMINATOR);
 
-            return new PrintStmt(newline, content.ToArray());
+            return new PrintStmt(newline, line, content.ToArray());
         }
 
         if (skipNextType(READ_STDIN)) // reading input

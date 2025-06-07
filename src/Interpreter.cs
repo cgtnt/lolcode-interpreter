@@ -1,5 +1,5 @@
+using ASTPrimitives;
 using InterpretationPrimitives;
-using ParsingPrimitives;
 
 namespace Interpretation;
 
@@ -11,7 +11,7 @@ public class Interpreter
 
         try
         {
-            statement.evaluate(programScope); // TODO: make sure line of runtime exceptions is printed
+            statement.evaluate(programScope);
         }
         catch (RuntimeException e)
         {

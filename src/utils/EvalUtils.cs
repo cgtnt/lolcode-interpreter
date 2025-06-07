@@ -40,7 +40,7 @@ public static class EvalUtils
             if (opType == BOOLEAN && boolOp is not null)
                 return booleanOperation(first, second, boolOp);
 
-            throw new InvalidTypeException();
+            throw new InvalidOpException("Invalid operation", oper.line);
         }
         catch (InvalidTypeException)
         {
