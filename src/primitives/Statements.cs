@@ -263,14 +263,23 @@ public class BlockStmt : Stmt
 public class ExpressionStmt : Stmt
 {
     Expr expression;
+    int line;
 
-    public ExpressionStmt(Expr expr)
+    public ExpressionStmt(Expr expr, int line)
     {
         expression = expr;
+        this.line = line;
     }
 
     public void evaluate(Scope scope)
     {
-        scope.SetVar("IT", expression.evaluate(scope));
+        try
+        {
+            scope.SetVar("IT", expression.evaluate(scope));
+        }
+        catch (RuntimeException e)
+        {
+            throw new RuntimeException(e.Message, line);
+        }
     }
 }

@@ -1,35 +1,50 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
+using ASTPrimitives;
+using Interpretation;
 using Lexing;
-using PreprocessingUtils;
+using Parsing;
 using Tokenization;
+using TokenizationPrimitives;
 
 namespace Testing;
 
 [TestClass]
-public class TokenizerTests
+public class InterpreterUnitTests
 {
-    private string TEST_DATA_DIR = "data";
-
-    private void AssertTokenize(string filepath)
+    private void AssertInterpret(string filepath)
     {
         Lexer lexer = new(PreprocessingUtils.Utils.loadSoureCode(filepath));
         List<string> lexemes = lexer.Lex();
 
         Tokenizer tokenizer = new(lexemes.ToArray());
-        List<Token> result = tokenizer.Tokenize();
+        List<Token> tokens = tokenizer.Tokenize();
+
+        Parser parser = new(tokens);
+        bool execute = parser.Parse(out Stmt program);
+
+        StringWriter consoleRedirection = new();
+        Console.SetOut(consoleRedirection);
+
+        Interpreter interpreter = new();
+        interpreter.Interpret(program);
+        string result = consoleRedirection.ToString();
 
         Assert.AreEqual(
-            string.Join('-', result),
-            PreprocessingUtils.Utils.loadSoureCode($"{filepath}.tokenizer.out")
+            result,
+            PreprocessingUtils.Utils.loadSoureCode($"{filepath}.interpreter.out")
         );
     }
 
-    [DataTestMethod]
-    [DataRow("ex3")]
-    [DataRow("ex4")]
-    public void TestValidCode(string filename)
+    [TestMethod]
+    [DynamicData(
+        nameof(TestDataLoader.CorrectCode),
+        typeof(TestDataLoader),
+        DynamicDataSourceType.Method
+    )]
+    public void TestValidCode(string filepath)
     {
-        string filepath = $"../../../{TEST_DATA_DIR}/{filename}";
-        AssertTokenize(filepath);
+        AssertInterpret(filepath);
     }
 }

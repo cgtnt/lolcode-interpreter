@@ -35,11 +35,7 @@ public class Parser
     }
 
     // parsing helpers
-    Token consumeNext() // TODO: change to arrow notation
-    {
-        Debugger.Log($"Consuming: {tokens[next]}");
-        return tokens[next++];
-    }
+    Token consumeNext() => tokens[next++];
 
     Token peekNext() => tokens[next];
 
@@ -180,7 +176,7 @@ public class Parser
             expect(WHILE);
             Expr condition = expression();
             BlockStmt block = blockStatement(LOOP_END);
-            expect(COMMAND_TERMINATOR);
+            expect(COMMAND_TERMINATOR, EOF);
 
             return new LoopStmt(block, condition, variable);
         }
@@ -210,7 +206,6 @@ public class Parser
 
             bool newline = skipNextType(BANG);
             expect(EOF, COMMAND_TERMINATOR);
-
             return new PrintStmt(newline, line, content.ToArray());
         }
 
@@ -236,8 +231,8 @@ public class Parser
         }
 
         Expr expr = expression(); // expression-statements
-        expect(EOF, COMMAND_TERMINATOR);
-        return new ExpressionStmt(expr);
+        Token terminator = expect(EOF, COMMAND_TERMINATOR);
+        return new ExpressionStmt(expr, terminator.line);
     }
 
     // expression parsing helpers
@@ -250,16 +245,9 @@ public class Parser
         {
             expr = new BinaryExpr(op, expr, expression());
         }
+        expect(END_INF);
 
-        if (isType(END_INF))
-        {
-            consumeNext();
-            return expr;
-        }
-        else
-        {
-            throw new ParsingException($"Expected 'MKAY' to terminate {op.text}", op.line);
-        }
+        return expr;
     }
 
     Token[] parameters()
@@ -325,9 +313,9 @@ public class Parser
             return new BinaryExpr(consumeNext(), expression(), expression());
 
         // unary expressions
-        if (isType(BOOL_NOT)) // TODO: increment, decremeent?
+        if (isType(BOOL_NOT))
         {
-            return new BinaryExpr(consumeNext(), expression(), expression());
+            return new UnaryExpr(consumeNext(), expression());
         }
 
         // n-ary expressions

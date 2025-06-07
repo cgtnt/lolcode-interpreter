@@ -1,0 +1,9 @@
+#!/bin/bash
+
+for DIR in $(ls "$1"); do
+  for FILE in $(ls "${1}/$DIR"); do
+    if ! echo "$FILE" | grep -q '\.'; then
+      echo "dotnet run Program.cs "${1}/${DIR}/${FILE}" >${1}/${DIR}/${FILE}.${2}.out"
+    fi
+  done
+done

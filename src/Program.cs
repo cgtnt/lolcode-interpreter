@@ -39,7 +39,7 @@ class Program
             Tokenizer tokenizer = new(lexemes.ToArray());
             List<Token> tokens = tokenizer.Tokenize();
 
-            //Debug.Log(string.Join('-', tokens));
+            Debugger.Log(string.Join('-', tokens));
 
             Parser parser = new(tokens);
             bool execute = parser.Parse(out Stmt program);

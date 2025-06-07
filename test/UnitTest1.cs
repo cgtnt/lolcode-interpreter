@@ -1,38 +1,35 @@
 using System.Collections.Generic;
 using Lexing;
-using PreprocessingUtils;
+using Tokenization;
+using TokenizationPrimitives;
 
 namespace Testing;
 
 [TestClass]
-public class LexerTests
+public class TokenizerTests
 {
-    private string TEST_DATA_DIR = "data";
-
-    private void AssertLex(string filepath)
+    private void AssertTokenize(string filepath)
     {
         Lexer lexer = new(PreprocessingUtils.Utils.loadSoureCode(filepath));
-        List<string> result = lexer.Lex();
+        List<string> lexemes = lexer.Lex();
 
-        Assert.AreEqual(string.Join('-', result), File.ReadAllText($"{filepath}.lexer.out"));
-    }
+        Tokenizer tokenizer = new(lexemes.ToArray());
+        List<Token> result = tokenizer.Tokenize();
 
-    [DataTestMethod]
-    [DataRow("ex1")]
-    [DataRow("ex4")]
-    [DataRow("ex5")]
-    public void TestValidCode(string filename)
-    {
-        string filepath = $"../../../{TEST_DATA_DIR}/{filename}";
-        AssertLex(filepath);
+        Assert.AreEqual(
+            string.Join('-', result) + '\n',
+            PreprocessingUtils.Utils.loadSoureCode($"{filepath}.tokenizer.out")
+        );
     }
 
     [TestMethod]
-    public void TestUnterminatedString()
+    [DynamicData(
+        nameof(TestDataLoader.CorrectCode),
+        typeof(TestDataLoader),
+        DynamicDataSourceType.Method
+    )]
+    public void TestValidCode(string filepath)
     {
-        string filename = $"../../../{TEST_DATA_DIR}/ex2"; //TODO: fix path
-
-        Lexer lexer = new(PreprocessingUtils.Utils.loadSoureCode(filename));
-        Assert.ThrowsException<SyntaxException>(lexer.Lex);
+        AssertTokenize(filepath);
     }
 }

@@ -11,7 +11,6 @@ namespace ASTPrimitives;
 public interface Expr
 {
     public Value evaluate(Scope s);
-    public string ToString();
 }
 
 public class BinaryExpr : Expr
@@ -156,8 +155,6 @@ public class BinaryExpr : Expr
                 throw new InvalidOpException($"Invalid operator {op.text}", op.line);
         }
     }
-
-    public override string ToString() => $"{op.text} {first} {second}";
 }
 
 public class UnaryExpr : Expr
@@ -191,8 +188,6 @@ public class UnaryExpr : Expr
                 throw new InvalidOpException($"Invalid operator {op.text}", op.line);
         }
     }
-
-    public override string ToString() => $"{op.text} {first}";
 }
 
 public class VariableExpr : Expr
@@ -208,17 +203,8 @@ public class VariableExpr : Expr
 
     public Value evaluate(Scope scope)
     {
-        try
-        {
-            return scope.GetVar(name);
-        }
-        catch (UninitializedVarExcetion e)
-        {
-            throw new UninitializedVarExcetion(e.Message, line);
-        }
+        return scope.GetVar(name);
     }
-
-    public override string ToString() => $"VAR: {name}";
 }
 
 public class FunctionCallExpr : Expr
@@ -259,8 +245,6 @@ public class FunctionCallExpr : Expr
             return v.value;
         }
     }
-
-    public override string ToString() => $"Function call: {name}";
 }
 
 public class LiteralExpr : Expr
@@ -276,6 +260,4 @@ public class LiteralExpr : Expr
     {
         return literal;
     }
-
-    public override string ToString() => $"{literal}";
 }
