@@ -37,7 +37,7 @@ public class Parser
     // parsing helpers
     Token consumeNext() // TODO: change to arrow notation
     {
-        Debug.Log($"Consuming: {tokens[next]}");
+        Debugger.Log($"Consuming: {tokens[next]}");
         return tokens[next++];
     }
 
@@ -128,6 +128,30 @@ public class Parser
         if (skipNextType(BEGIN)) // program
         {
             return blockStatement(END);
+        }
+
+        if (skipNextType(FUNC_BEGIN)) // function declaration
+        {
+            Token identifier = expect(T_IDENTIFIER);
+
+            // parse arguemnts - AS EXPRESSION
+            Token[] param = parameters();
+
+            BlockStmt block = blockStatement(FUNC_END);
+            expect(COMMAND_TERMINATOR, EOF);
+
+            return new FunctionDeclareStmt(identifier, block, param);
+        }
+
+        if (skipNextType(RETURN_VAL, RETURN_NULL)) // function return
+        {
+            if (skipNextType(COMMAND_TERMINATOR, EOF))
+                return new ReturnStmt();
+
+            Expr returnVal = expression();
+            expect(COMMAND_TERMINATOR, EOF);
+
+            return new ReturnStmt(returnVal);
         }
 
         if (skipNextType(IF)) // if statement
@@ -237,10 +261,48 @@ public class Parser
         }
     }
 
+    Token[] parameters()
+    {
+        List<Token> parameters = new();
+
+        while (!isType(COMMAND_TERMINATOR, EOF))
+        {
+            expect(ARG);
+            parameters.Add(expect(T_IDENTIFIER));
+            skipNextType(AND);
+        }
+
+        return parameters.ToArray();
+    }
+
+    Expr[] arguments()
+    {
+        List<Expr> args = new();
+
+        while (!isType(END_INF, COMMAND_TERMINATOR, EOF))
+        {
+            expect(ARG);
+            args.Add(expression());
+            skipNextType(AND);
+        }
+        expect(END_INF);
+
+        return args.ToArray();
+    }
+
     //  expression parser
     Expr expression()
     {
         skipNextType(AND);
+
+        // function call
+        if (skipNextType(FUNC_CALL))
+        {
+            Token name = expect(T_IDENTIFIER);
+            Expr[] args = arguments();
+
+            return new FunctionCallExpr(name, args);
+        }
 
         // binary expressions
         if (

@@ -197,19 +197,70 @@ public class UnaryExpr : Expr
 
 public class VariableExpr : Expr
 {
-    Token name;
+    string name;
+    int line;
 
-    public VariableExpr(Token name)
+    public VariableExpr(Token identifier)
     {
-        this.name = name;
+        name = identifier.text;
+        line = identifier.line;
     }
 
     public Value evaluate(Scope scope)
     {
-        return scope.GetVar(name.text);
+        try
+        {
+            return scope.GetVar(name);
+        }
+        catch (UninitializedVarExcetion e)
+        {
+            throw new UninitializedVarExcetion(e.Message, line);
+        }
     }
 
     public override string ToString() => $"VAR: {name}";
+}
+
+public class FunctionCallExpr : Expr
+{
+    string name;
+    int line;
+    Expr[] arguments;
+
+    public FunctionCallExpr(Token identifier, Expr[] arguments)
+    {
+        name = identifier.text;
+        line = identifier.line;
+        this.arguments = arguments;
+    }
+
+    public Value evaluate(Scope scope)
+    {
+        FunctionValue? function = scope.GetVar(name) as FunctionValue;
+
+        if (function is null)
+            throw new InvalidTypeException($"Cannot call {name}, not a function", line);
+
+        Scope localScope = new Scope(scope);
+
+        if (function.ParametersCount != arguments.Length)
+            throw new SyntaxException($"Invalid number of arguments provided to {name}", line);
+
+        for (int i = 0; i < function.ParametersCount; ++i)
+            localScope.DefineVar(function.parameters[i], arguments[i].evaluate(scope));
+
+        try
+        {
+            function.block.evaluate(localScope);
+            throw new ReturnValue(localScope.GetVar("IT")); // if the block doesn't return anything, return implicit IT
+        }
+        catch (ReturnValue v)
+        {
+            return v.value;
+        }
+    }
+
+    public override string ToString() => $"Function call: {name}";
 }
 
 public class LiteralExpr : Expr

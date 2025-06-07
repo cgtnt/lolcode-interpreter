@@ -185,38 +185,18 @@ public class FunctionDeclareStmt : Stmt
     }
 }
 
-public class FunctionCallStmt : Stmt
+public class ReturnStmt : Stmt
 {
-    string identifier;
-    int line;
-    Expr[] arguments;
+    Expr? value;
 
-    public FunctionCallStmt(Token identifier, Expr[] arguments)
+    public ReturnStmt(Expr? value = null)
     {
-        this.identifier = identifier.text;
-        this.line = identifier.line;
-        this.arguments = arguments;
+        this.value = value;
     }
 
     public void evaluate(Scope scope)
     {
-        FunctionValue? function = scope.GetVar(identifier) as FunctionValue;
-
-        if (function is null)
-            throw new InvalidTypeException($"Cannot call {identifier}, not a function", line);
-
-        Scope localScope = new Scope(scope);
-
-        if (function.ParametersCount != arguments.Length)
-            throw new SyntaxException(
-                $"Invalid number of arguments provided to {identifier}",
-                line
-            );
-
-        for (int i = 0; i < function.ParametersCount; ++i)
-            localScope.DefineVar(function.parameters[i], arguments[i].evaluate(scope));
-
-        function.block.evaluate(localScope);
+        throw new ReturnValue(value is not null ? value.evaluate(scope) : new UntypedValue());
     }
 }
 

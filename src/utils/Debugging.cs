@@ -1,6 +1,6 @@
 using System;
 
-public static class Debug
+public static class Debugger
 {
     static bool enabled = false;
 
