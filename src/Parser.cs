@@ -78,6 +78,27 @@ public class Parser
     }
 
     // statement parsing helpers
+    VariableDeclareStmt? stictVariableDeclare(Token identifier)
+    {
+        if (skipNextType(DECLARE_SET_VAR))
+        {
+            Expr value = expression();
+            expect(COMMAND_TERMINATOR, EOF);
+
+            return new VariableDeclareStmt(identifier, value: value);
+        }
+
+        if (skipNextType(DECLARE_TYPE_VAR))
+        {
+            Token type = expect(TI_INT, TI_STRING, TI_BOOL, TI_FLOAT);
+            expect(COMMAND_TERMINATOR, EOF);
+
+            return new VariableDeclareStmt(identifier, type: type.type);
+        }
+
+        return null;
+    }
+
     BlockStmt blockStatement(TokenType end)
     {
         expect(COMMAND_TERMINATOR);
@@ -122,7 +143,16 @@ public class Parser
 
         if (skipNextType(LOOP_BEGIN)) // loop statement
         {
-            Token variable = expect(T_IDENTIFIER);
+            expect(DECLARE_VAR);
+            Token identifier = expect(T_IDENTIFIER);
+            VariableDeclareStmt? variable = stictVariableDeclare(identifier);
+
+            if (variable is null)
+                throw new SyntaxException(
+                    "Expected variable declaration statement",
+                    identifier.line
+                );
+
             expect(WHILE);
             Expr condition = expression();
             BlockStmt block = blockStatement(LOOP_END);
@@ -134,24 +164,11 @@ public class Parser
         if (skipNextType(DECLARE_VAR)) // variable declaration
         {
             Token identifier = expect(T_IDENTIFIER);
-            Token type;
-            Expr value;
 
-            if (skipNextType(DECLARE_SET_VAR))
-            {
-                value = expression();
-                expect(COMMAND_TERMINATOR, EOF);
+            VariableDeclareStmt? statement = stictVariableDeclare(identifier);
 
-                return new VariableDeclareStmt(identifier, value: value);
-            }
-
-            if (skipNextType(DECLARE_TYPE_VAR))
-            {
-                type = expect(TI_INT, TI_STRING, TI_BOOL, TI_FLOAT, TI_UNTYPED);
-                expect(COMMAND_TERMINATOR, EOF);
-
-                return new VariableDeclareStmt(identifier, type: type.type);
-            }
+            if (statement is not null)
+                return statement;
 
             expect(COMMAND_TERMINATOR, EOF);
             return new VariableDeclareStmt(identifier);
@@ -181,7 +198,7 @@ public class Parser
 
         if (isType(T_IDENTIFIER)) // assigning variable values
         {
-            Token identifier = consumeNext(); //TODO: test this! will it break expression-stmt?
+            Token identifier = consumeNext();
 
             if (skipNextType(ASSIGN))
             {

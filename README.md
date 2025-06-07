@@ -23,8 +23,8 @@ An interpreter for a subset of the [LOLCODE esoteric language](http://www.lolcod
 ### Loops
 Loops have the following form:
 ```
-IM IN YR <variable> WILE <expression>
+IM IN YR <variable declaration>, WILE <expression>
   <code block>
-IM OUTTA YR
+IM OUTTA YR 
 ```
-Where the variable is a temporary, locally scoped variable accessible in the loop body.
+Where ```<variable declaration>``` is a variable declaration statement, with TYPE or VALUE of variable specified. The variable will be declared in the local scope of the loop. 

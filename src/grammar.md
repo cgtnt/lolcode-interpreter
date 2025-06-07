@@ -67,5 +67,10 @@ A bare expression (e.g. a function call or math operation), without any assignme
 Have no effect on the IT variable.  
 
 ### Control flow
-
+```
+IM IN YR <variable declaration>, WILE <expression>
+  <code block>
+IM OUTTA YR 
+```
+Where ```<variable declaration>``` is a variable declaration statement, with TYPE or VALUE of variable specified. The variable will be declared in the local scope of the loop. 
 

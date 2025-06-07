@@ -139,9 +139,9 @@ public class LoopStmt : Stmt
 {
     BlockStmt block;
     Expr condition;
-    Token variable;
+    VariableDeclareStmt variable;
 
-    public LoopStmt(BlockStmt block, Expr condition, Token variable)
+    public LoopStmt(BlockStmt block, Expr condition, VariableDeclareStmt variable)
     {
         this.block = block;
         this.condition = condition;
@@ -152,7 +152,7 @@ public class LoopStmt : Stmt
     {
         Scope localScope = new Scope(scope);
 
-        localScope.DefineVar(variable.text, new UntypedValue()); // FIXME: count type is unintialized, fails on expr comparison beow
+        variable.evaluate(localScope);
 
         while (TypeCaster.TryCastBool(condition.evaluate(localScope)).Value)
         {
