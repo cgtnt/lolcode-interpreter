@@ -13,6 +13,10 @@ public class Interpreter
         {
             statement.evaluate(programScope);
         }
+        catch (ReturnValue v)
+        {
+            throw new RuntimeException("Cannot FOUND YR or GTFO from main program block", v.line);
+        }
         catch (RuntimeException e)
         {
             ExceptionReporter.Log(e);

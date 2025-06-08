@@ -35,11 +35,19 @@ public class Parser
     }
 
     // parsing helpers
-    Token consumeNext() => tokens[next++];
+    Token consumeNext()
+    {
+        if (!atEOF())
+            return tokens[next++];
+        else
+        {
+            return tokens[^1];
+        }
+    }
 
     Token peekNext() => tokens[next];
 
-    bool atEOF() => tokens[next].type == EOF;
+    bool atEOF() => peekNext().type == EOF;
 
     bool nextIsType(params TokenType[] types) => types.Any(t => peekNext().type == t);
 
@@ -72,7 +80,7 @@ public class Parser
 
     void synchronize() // if stmt invalid, skip to beginning of next statement
     {
-        while (!nextIsType(COMMAND_TERMINATOR))
+        while (!nextIsType(COMMAND_TERMINATOR, EOF))
             consumeNext();
 
         consumeNext();
@@ -145,15 +153,17 @@ public class Parser
             return new FunctionDeclareStmt(identifier, block, param);
         }
 
-        if (skipIfNextIsType(RETURN_VAL, RETURN_NULL)) // function return
+        if (nextIsType(RETURN_VAL, RETURN_NULL)) // function return
         {
+            Token keyword = consumeNext();
+
             if (skipIfNextIsType(COMMAND_TERMINATOR, EOF)) // return NOOB
-                return new ReturnStmt();
+                return new ReturnStmt(keyword.line);
 
             Expr returnVal = expression(); // return value
 
             expectStmtTerm();
-            return new ReturnStmt(returnVal);
+            return new ReturnStmt(keyword.line, returnVal);
         }
 
         if (skipIfNextIsType(IF)) // if statement
