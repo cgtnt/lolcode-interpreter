@@ -24,8 +24,8 @@ public enum TokenType
 {
     // lexer control tokens
     INVALID,
-    COMMAND_TERMINATOR,
     EOF,
+    COMMAND_TERMINATOR, // \n, ','
 
     // program
     BEGIN, // hai

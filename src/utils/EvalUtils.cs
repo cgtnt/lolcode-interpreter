@@ -66,25 +66,14 @@ public static class EvalUtils
     public static BoolValue booleanOperation(Value first, Value second, BoolOp boolOp)
     {
         return new BoolValue(
-            (first, second) switch
-            {
-                (BoolValue one, BoolValue two) => boolOp(one.Value, two.Value),
-                _ => boolOp(TypeCaster.CastBool(first).Value, TypeCaster.CastBool(second).Value),
-            }
+            boolOp(TypeCaster.CastBool(first).Value, TypeCaster.CastBool(second).Value)
         );
     }
 
     public static StringValue stringOperation(Value first, Value second, StringOp stringOp)
     {
         return new StringValue(
-            (first, second) switch
-            {
-                (StringValue one, StringValue two) => stringOp(one.Value, two.Value),
-                _ => stringOp(
-                    TypeCaster.CastString(first).Value,
-                    TypeCaster.CastString(second).Value
-                ),
-            }
+            stringOp(TypeCaster.CastString(first).Value, TypeCaster.CastString(second).Value)
         );
     }
 
