@@ -2,7 +2,23 @@
 An interpreter for a subset of the [LOLCODE esoteric language](http://www.lolcode.org/).
 Usage:
 ```
-[executable] <LOLCODE source file>
+cd src/
+dotnet run Program.cs <LOLCODE source file>
+```
+Example - Hello World! (x5):
+```
+HAI
+
+HOW IZ I Greet 
+  VISIBLE "HELLO WORLD"!
+IF U SAY SO
+
+IM IN YR I HAS A COUNT ITZ 0, WILE DIFFRINT COUNT AN BIGGR OF COUNT AN 5 
+  I IZ Greet MKAY
+  COUNT R SUM OF COUNT AN 1
+IM OUTTA YR
+
+KTHXBYE
 ```
 
 ## Language features
