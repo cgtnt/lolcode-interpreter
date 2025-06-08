@@ -11,6 +11,7 @@ public abstract record Value
 }
 
 // types
+// NUMBR
 public record IntValue(int Value = 0) : Value
 {
     public override object RawValue => Value;
@@ -18,6 +19,7 @@ public record IntValue(int Value = 0) : Value
     public override string ToString() => Value.ToString();
 }
 
+// NUMBAR
 public record FloatValue(float Value = 0) : Value
 {
     public override object RawValue => Value;
@@ -25,6 +27,7 @@ public record FloatValue(float Value = 0) : Value
     public override string ToString() => Value.ToString();
 }
 
+// YARN
 public record StringValue(string Value = "") : Value
 {
     public override object RawValue => Value;
@@ -32,6 +35,7 @@ public record StringValue(string Value = "") : Value
     public override string ToString() => Value.ToString();
 }
 
+// TROOF
 public record BoolValue(bool Value = false) : Value
 {
     public override object RawValue => Value;
@@ -39,6 +43,7 @@ public record BoolValue(bool Value = false) : Value
     public override string ToString() => Value.ToString();
 }
 
+// NOOB
 public record UntypedValue() : Value
 {
     public override object? RawValue => null;
@@ -57,7 +62,7 @@ public record FunctionValue(BlockStmt block, string[] parameters) : Value
 // implicit type casting
 public static class TypeCaster
 {
-    public static string GetValueType(Value value)
+    public static string GetValueType(Value value) // translate internal implementation types to LOLCODE language type names
     {
         switch (value)
         {
@@ -80,6 +85,7 @@ public static class TypeCaster
         }
     }
 
+    // type casting
     public static BoolValue CastBool(Value value)
     {
         switch (value)
@@ -157,6 +163,7 @@ public static class TypeCaster
     }
 }
 
+// type checking utilities
 public class TypeChecker
 {
     public static bool Equals(Type one, Type two)

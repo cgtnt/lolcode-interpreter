@@ -23,7 +23,7 @@ class Program
             string sourceCode = PreprocessingUtils.Utils.loadSoureCode(file);
             Process(sourceCode);
         }
-        catch (Exception e)
+        catch (Exception e) // any exception that wasn't caught below this level is a critical error
         {
             throw new CriticalError(e);
         }

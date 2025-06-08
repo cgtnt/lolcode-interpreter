@@ -190,6 +190,7 @@ public class UnaryExpr : Expr
     }
 }
 
+// variable access expr
 public class VariableExpr : Expr
 {
     string name;
@@ -232,6 +233,7 @@ public class FunctionCallExpr : Expr
         if (function.ParametersCount != arguments.Length)
             throw new SyntaxException($"Invalid number of arguments provided to {name}", line);
 
+        // initialize params as local variables
         for (int i = 0; i < function.ParametersCount; ++i)
             localScope.DefineVar(function.parameters[i], arguments[i].evaluate(scope));
 
@@ -247,6 +249,7 @@ public class FunctionCallExpr : Expr
     }
 }
 
+// source code literals
 public class LiteralExpr : Expr
 {
     Value literal;

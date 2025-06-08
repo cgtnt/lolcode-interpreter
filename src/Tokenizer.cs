@@ -22,8 +22,10 @@ public class Tokenizer
         this.src = src;
     }
 
+    // tokenization helpers
     bool atEOF() => next >= src.Length;
 
+    // type identification helpers
     bool isInteger(string lexeme)
     {
         foreach (char c in lexeme)
@@ -66,6 +68,7 @@ public class Tokenizer
         return true;
     }
 
+    // tokenization
     Token nextToken()
     {
         if (CharChecker.isCommandTerminator(src[next]))
@@ -86,12 +89,12 @@ public class Tokenizer
             return new Token(COMMAND_TERMINATOR, src[next - 1], line);
         }
 
-        string[]? lexemeBuffer = new string[LONGEST_KEYWORD_LEN];
-        int bufferNext = 0;
-
         TokenType type = INVALID;
         string match = "";
         int longestMatchLength = -1;
+
+        string[]? lexemeBuffer = new string[LONGEST_KEYWORD_LEN]; // handle multi-word keywords
+        int bufferNext = 0;
 
         while (!atEOF() && bufferNext < LONGEST_KEYWORD_LEN)
         {
@@ -101,7 +104,7 @@ public class Tokenizer
 
             if (
                 TokenTranslation.keywordToToken.TryGetValue(candidate, out TokenType potential_type)
-            )
+            ) // successful match of keyword
             {
                 if (bufferNext > longestMatchLength)
                 {
@@ -112,12 +115,12 @@ public class Tokenizer
             }
         }
 
-        if (longestMatchLength == -1)
+        if (longestMatchLength == -1) // didn't match keyword
         {
             string lexeme = lexemeBuffer[0];
             match = lexeme;
-            // definitely not keyword - only 1 word long and failed to match
 
+            // try matching type literals, identifiers
             if (isIdentifier(lexeme))
             {
                 type = T_IDENTIFIER;
@@ -143,7 +146,7 @@ public class Tokenizer
         }
         else
         {
-            next = start + longestMatchLength; // consume matched # of tokens
+            next = start + longestMatchLength; // consume matched # of tokens (matched by keyword)
         }
 
         return new Token(type, match, line);

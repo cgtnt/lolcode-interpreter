@@ -18,19 +18,19 @@ public class Parser
         this.tokens = tokens;
     }
 
-    public bool Parse(out Stmt program)
+    public bool Parse(out Stmt program) // entry point
     {
-        while (isType(COMMAND_TERMINATOR))
+        while (nextIsType(COMMAND_TERMINATOR)) // skip leading empty lines
             ++next;
 
-        if (!isType(BEGIN))
+        if (!nextIsType(BEGIN))
         {
             executable = false;
             ExceptionReporter.Log(new ParsingException("Program must start with HAI", 1));
             synchronize();
         }
 
-        program = statement();
+        program = statement(); // program is wrapped in block statement
         return executable;
     }
 
@@ -41,11 +41,11 @@ public class Parser
 
     bool atEOF() => tokens[next].type == EOF;
 
-    bool isType(params TokenType[] types) => types.Any(t => peekNext().type == t);
+    bool nextIsType(params TokenType[] types) => types.Any(t => peekNext().type == t);
 
-    bool skipNextType(params TokenType[] types)
+    bool skipIfNextIsType(params TokenType[] types)
     {
-        if (isType(types))
+        if (nextIsType(types))
         {
             consumeNext();
             return true;
@@ -56,7 +56,7 @@ public class Parser
 
     Token expect(params TokenType[] types)
     {
-        if (isType(types))
+        if (nextIsType(types))
             return consumeNext();
         else
             throw new ParsingException(
@@ -70,18 +70,18 @@ public class Parser
         return expect(COMMAND_TERMINATOR, EOF);
     }
 
-    void synchronize()
+    void synchronize() // if stmt invalid, skip to beginning of next statement
     {
-        while (!isType(COMMAND_TERMINATOR))
+        while (!nextIsType(COMMAND_TERMINATOR))
             consumeNext();
 
         consumeNext();
     }
 
     // statement parsing helpers
-    VariableDeclareStmt? stictVariableDeclare(Token identifier)
+    VariableDeclareStmt? stictVariableDeclare(Token identifier) // declare variable with type or value
     {
-        if (skipNextType(DECLARE_SET_VAR))
+        if (skipIfNextIsType(DECLARE_SET_VAR))
         {
             Expr value = expression();
 
@@ -89,7 +89,7 @@ public class Parser
             return new VariableDeclareStmt(identifier, value: value);
         }
 
-        if (skipNextType(DECLARE_TYPE_VAR))
+        if (skipIfNextIsType(DECLARE_TYPE_VAR))
         {
             Token type = expect(TI_INT, TI_STRING, TI_BOOL, TI_FLOAT);
 
@@ -100,12 +100,13 @@ public class Parser
         return null;
     }
 
+    // block statements - body of loops, function, ifs
     BlockStmt blockStatement(TokenType end)
     {
         expect(COMMAND_TERMINATOR);
         List<Stmt> statements = new();
 
-        while (!isType(end, EOF))
+        while (!nextIsType(end, EOF))
         {
             try
             {
@@ -126,12 +127,12 @@ public class Parser
     // statement parser
     Stmt statement()
     {
-        if (skipNextType(BEGIN)) // program
+        if (skipIfNextIsType(BEGIN)) // program
         {
             return blockStatement(END);
         }
 
-        if (skipNextType(FUNC_BEGIN)) // function declaration
+        if (skipIfNextIsType(FUNC_BEGIN)) // function declaration
         {
             Token identifier = expect(T_IDENTIFIER);
 
@@ -144,9 +145,9 @@ public class Parser
             return new FunctionDeclareStmt(identifier, block, param);
         }
 
-        if (skipNextType(RETURN_VAL, RETURN_NULL)) // function return
+        if (skipIfNextIsType(RETURN_VAL, RETURN_NULL)) // function return
         {
-            if (skipNextType(COMMAND_TERMINATOR, EOF)) // return NOOB
+            if (skipIfNextIsType(COMMAND_TERMINATOR, EOF)) // return NOOB
                 return new ReturnStmt();
 
             Expr returnVal = expression(); // return value
@@ -155,7 +156,7 @@ public class Parser
             return new ReturnStmt(returnVal);
         }
 
-        if (skipNextType(IF)) // if statement
+        if (skipIfNextIsType(IF)) // if statement
         {
             expect(COMMAND_TERMINATOR);
             expect(THEN);
@@ -166,7 +167,7 @@ public class Parser
             return new IfStmt(trueBlock, falseBlock);
         }
 
-        if (skipNextType(LOOP_BEGIN)) // loop statement
+        if (skipIfNextIsType(LOOP_BEGIN)) // loop statement
         {
             expect(DECLARE_VAR);
             Token identifier = expect(T_IDENTIFIER);
@@ -186,7 +187,7 @@ public class Parser
             return new LoopStmt(block, condition, variable);
         }
 
-        if (skipNextType(DECLARE_VAR)) // variable declaration
+        if (skipIfNextIsType(DECLARE_VAR)) // variable declaration
         {
             Token identifier = expect(T_IDENTIFIER);
 
@@ -199,23 +200,23 @@ public class Parser
             return new VariableDeclareStmt(identifier);
         }
 
-        if (isType(WRITE_STDOUT)) // printing
+        if (nextIsType(WRITE_STDOUT)) // printing
         {
             int line = consumeNext().line;
             List<Expr> content = new();
 
-            while (!isType(EOF, COMMAND_TERMINATOR, BANG))
+            while (!nextIsType(EOF, COMMAND_TERMINATOR, BANG))
             {
                 content.Add(expression());
             }
 
-            bool newline = skipNextType(BANG);
+            bool newline = skipIfNextIsType(BANG);
 
             expectStmtTerm();
             return new PrintStmt(newline, line, content.ToArray());
         }
 
-        if (skipNextType(READ_STDIN)) // reading input
+        if (skipIfNextIsType(READ_STDIN)) // reading input
         {
             Token identifier = expect(T_IDENTIFIER);
 
@@ -223,11 +224,11 @@ public class Parser
             return new InputStmt(identifier);
         }
 
-        if (isType(T_IDENTIFIER)) // assigning variable values
+        if (nextIsType(T_IDENTIFIER)) // assigning variable values
         {
             Token identifier = consumeNext();
 
-            if (skipNextType(ASSIGN))
+            if (skipIfNextIsType(ASSIGN))
             {
                 Expr right = expression();
 
@@ -249,7 +250,7 @@ public class Parser
         Token op = (consumeNext());
         Expr expr = expression();
 
-        while (!isType(END_INF, EOF, COMMAND_TERMINATOR))
+        while (!nextIsType(END_INF, EOF, COMMAND_TERMINATOR))
         {
             expr = new BinaryExpr(op, expr, expression());
         }
@@ -258,29 +259,29 @@ public class Parser
         return expr;
     }
 
-    Token[] parameters()
+    Token[] parameters() // func declaration parameters
     {
         List<Token> parameters = new();
 
-        while (!isType(COMMAND_TERMINATOR, EOF))
+        while (!nextIsType(COMMAND_TERMINATOR, EOF))
         {
             expect(ARG);
             parameters.Add(expect(T_IDENTIFIER));
-            skipNextType(AND);
+            skipIfNextIsType(AND);
         }
 
         return parameters.ToArray();
     }
 
-    Expr[] arguments()
+    Expr[] arguments() // func call arguments
     {
         List<Expr> args = new();
 
-        while (!isType(END_INF, COMMAND_TERMINATOR, EOF))
+        while (!nextIsType(END_INF, COMMAND_TERMINATOR, EOF))
         {
             expect(ARG);
             args.Add(expression());
-            skipNextType(AND);
+            skipIfNextIsType(AND);
         }
         expect(END_INF);
 
@@ -290,10 +291,11 @@ public class Parser
     //  expression parser
     Expr expression()
     {
-        skipNextType(AND);
+        // skip optional AN separators
+        skipIfNextIsType(AND);
 
         // function call
-        if (skipNextType(FUNC_CALL))
+        if (skipIfNextIsType(FUNC_CALL))
         {
             Token name = expect(T_IDENTIFIER);
             Expr[] args = arguments();
@@ -303,7 +305,7 @@ public class Parser
 
         // binary expressions
         if (
-            isType(
+            nextIsType(
                 PLUS,
                 MINUS,
                 TIMES,
@@ -321,41 +323,41 @@ public class Parser
             return new BinaryExpr(consumeNext(), expression(), expression());
 
         // unary expressions
-        if (isType(BOOL_NOT))
+        if (nextIsType(BOOL_NOT))
         {
             return new UnaryExpr(consumeNext(), expression());
         }
 
         // n-ary expressions
-        if (isType(BOOL_AND_INF, BOOL_OR_INF, CONCAT))
+        if (nextIsType(BOOL_AND_INF, BOOL_OR_INF, CONCAT))
         {
             return naryExpr();
         }
 
         // variable dereferencing
-        if (isType(T_IDENTIFIER))
+        if (nextIsType(T_IDENTIFIER))
         {
             return new VariableExpr(consumeNext());
         }
 
         // literal expressions
-        if (skipNextType(TRUE))
+        if (skipIfNextIsType(TRUE))
         {
             return new LiteralExpr(new BoolValue(true));
         }
 
-        if (skipNextType(FALSE))
+        if (skipIfNextIsType(FALSE))
         {
             return new LiteralExpr(new BoolValue(false));
         }
 
-        if (isType(T_INT))
+        if (nextIsType(T_INT))
             return new LiteralExpr(new IntValue(int.Parse(consumeNext().text)));
 
-        if (isType(T_FLOAT))
+        if (nextIsType(T_FLOAT))
             return new LiteralExpr(new FloatValue(float.Parse(consumeNext().text)));
 
-        if (isType(T_STRING))
+        if (nextIsType(T_STRING))
             return new LiteralExpr(new StringValue(consumeNext().text[1..^1]));
 
         // invalid expression
