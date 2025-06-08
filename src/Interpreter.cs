@@ -15,7 +15,9 @@ public class Interpreter
         }
         catch (ReturnValue v)
         {
-            throw new RuntimeException("Cannot FOUND YR or GTFO from main program block", v.line);
+            ExceptionReporter.Log(
+                new RuntimeException("Cannot FOUND YR or GTFO from main program block", v.line)
+            );
         }
         catch (RuntimeException e)
         {

@@ -7,16 +7,16 @@ using Parsing;
 using Tokenization;
 using TokenizationPrimitives;
 
-class Program
+public static class Program
 {
     static string EXECUTABLE_NAME = "[executable]";
 
-    static void Usage()
+    public static void Usage()
     {
         Console.WriteLine($"Usage: {EXECUTABLE_NAME} <source file>");
     }
 
-    static void ProcessFile(string file)
+    public static void ProcessFile(string file)
     {
         try
         {
@@ -29,7 +29,7 @@ class Program
         }
     }
 
-    static void Process(string sourceCode)
+    public static void Process(string sourceCode)
     {
         try
         {
@@ -42,9 +42,9 @@ class Program
             Debugger.Log(string.Join('-', tokens));
 
             Parser parser = new(tokens);
-            bool execute = parser.Parse(out Stmt program);
+            bool execute = parser.Parse(out Stmt? program);
 
-            if (execute)
+            if (execute && program is not null)
             {
                 Interpreter interpreter = new();
                 interpreter.Interpret(program);

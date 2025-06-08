@@ -172,7 +172,7 @@ public class TokenTranslation
         { "!", BANG },
     };
 
-    public static Dictionary<TokenType, string> tokenToKeyword = swap(keywordToToken);
+    public static Dictionary<TokenType, string> tokenToKeyword = constructTokenToKeyword();
 
     public static string[] TokensToKeywords(params TokenType[] types) =>
         types.Select(t => tokenToKeyword[t]).ToArray();
@@ -187,5 +187,13 @@ public class TokenTranslation
             result.Add(value, key);
 
         return result;
+    }
+
+    static Dictionary<TokenType, string> constructTokenToKeyword()
+    {
+        Dictionary<TokenType, string> res = swap(keywordToToken);
+        res.Add(COMMAND_TERMINATOR, "',' , newline");
+        res.Add(EOF, "end of file");
+        return res;
     }
 }

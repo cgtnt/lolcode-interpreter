@@ -231,15 +231,17 @@ public class FunctionDeclareStmt : Stmt
 public class ReturnStmt : Stmt
 {
     Expr? value;
+    int line;
 
-    public ReturnStmt(Expr? value = null)
+    public ReturnStmt(int line, Expr? value = null)
     {
         this.value = value;
+        this.line = line;
     }
 
     public void evaluate(Scope scope)
     {
-        throw new ReturnValue(value is not null ? value.evaluate(scope) : new UntypedValue());
+        throw new ReturnValue(value is not null ? value.evaluate(scope) : new UntypedValue(), line);
     }
 }
 

@@ -18,8 +18,10 @@ public class Parser
         this.tokens = tokens;
     }
 
-    public bool Parse(out Stmt program) // entry point
+    public bool Parse(out Stmt? program) // entry point
     {
+        program = null;
+
         while (nextIsType(COMMAND_TERMINATOR)) // skip leading empty lines
             ++next;
 
@@ -30,7 +32,16 @@ public class Parser
             synchronize();
         }
 
-        program = statement(); // program is wrapped in block statement
+        try
+        {
+            program = statement(); // program is wrapped in block statement
+        }
+        catch (ParsingException e)
+        {
+            executable = false;
+            ExceptionReporter.Log(e);
+        }
+
         return executable;
     }
 

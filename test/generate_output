@@ -3,7 +3,7 @@
 for DIR in $(ls "$1"); do
   for FILE in $(ls "${1}/$DIR"); do
     if ! echo "$FILE" | grep -q '\.'; then
-      echo "dotnet run Program.cs "${1}/${DIR}/${FILE}" >${1}/${DIR}/${FILE}.${2}.out"
+      dotnet run Program.cs "${1}/${DIR}/${FILE}" >${1}/${DIR}/${FILE}.${2}.out 2>&1
     fi
   done
 done

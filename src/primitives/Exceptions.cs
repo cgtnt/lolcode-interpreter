@@ -1,6 +1,6 @@
 using System;
 
-class ExceptionReporter
+public class ExceptionReporter
 {
     public static void Log(Exception e)
     {

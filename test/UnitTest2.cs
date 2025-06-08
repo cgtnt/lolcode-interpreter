@@ -1,12 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using ASTPrimitives;
-using Interpretation;
-using Lexing;
-using Parsing;
-using Tokenization;
-using TokenizationPrimitives;
 
 namespace Testing;
 
@@ -15,20 +8,19 @@ public class InterpreterUnitTests
 {
     private void AssertInterpret(string filepath)
     {
-        Lexer lexer = new(PreprocessingUtils.Utils.loadSoureCode(filepath));
-        List<string> lexemes = lexer.Lex();
-
-        Tokenizer tokenizer = new(lexemes.ToArray());
-        List<Token> tokens = tokenizer.Tokenize();
-
-        Parser parser = new(tokens);
-        bool execute = parser.Parse(out Stmt program);
-
         StringWriter consoleRedirection = new();
         Console.SetOut(consoleRedirection);
+        Console.SetError(consoleRedirection);
 
-        Interpreter interpreter = new();
-        interpreter.Interpret(program);
+        try
+        {
+            Program.ProcessFile(filepath);
+        }
+        catch (CriticalError e)
+        {
+            ExceptionReporter.Log(e);
+        }
+
         string result = consoleRedirection.ToString();
 
         Assert.AreEqual(
@@ -44,6 +36,17 @@ public class InterpreterUnitTests
         DynamicDataSourceType.Method
     )]
     public void TestValidCode(string filepath)
+    {
+        AssertInterpret(filepath);
+    }
+
+    [TestMethod]
+    [DynamicData(
+        nameof(TestDataLoader.IncorrectCode),
+        typeof(TestDataLoader),
+        DynamicDataSourceType.Method
+    )]
+    public void TestIncorrectCode(string filepath)
     {
         AssertInterpret(filepath);
     }

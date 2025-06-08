@@ -240,7 +240,7 @@ public class FunctionCallExpr : Expr
         try
         {
             function.block.evaluate(localScope);
-            throw new ReturnValue(localScope.GetVar("IT")); // if the block doesn't return anything, return implicit IT
+            throw new ReturnValue(localScope.GetVar("IT"), line); // if the block doesn't return anything, return implicit IT
         }
         catch (ReturnValue v)
         {
