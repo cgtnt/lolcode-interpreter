@@ -36,7 +36,7 @@ public class Tokenizer
         return true;
     }
 
-    bool isFloat(string lexeme) //TODO: maybe update to disallow num beginning or ending with a dot
+    bool isFloat(string lexeme)
     {
         bool decimalDotReached = false;
         foreach (char c in lexeme)
