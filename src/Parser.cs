@@ -60,7 +60,7 @@ public class Parser
             return consumeNext();
         else
             throw new ParsingException(
-                $"Expected tokens: {string.Join(", ", types)}",
+                $"Expected tokens: {string.Join(", ", TokenTranslation.TokensToKeywords(types))}",
                 peekNext().line
             );
     }

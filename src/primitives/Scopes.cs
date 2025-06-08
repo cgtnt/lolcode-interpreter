@@ -27,7 +27,7 @@ public class Scope
     {
         if (!variables.TryGetValue(name, out Value? current))
             throw new UninitializedVarExcetion(
-                $"Cannot assign {value.RawValue}({value.GetType()}) to uninitiazlied variable {name}"
+                $"Cannot assign {value.RawValue}({TypeCaster.GetValueType(value)}) to uninitiazlied variable {name}"
             );
 
         if (
@@ -38,7 +38,7 @@ public class Scope
             variables[name] = value;
         else
             throw new TypeCastingException(
-                $"Cannot assign {value.RawValue}({value.GetType()}) to {name}({current.GetType()})"
+                $"Cannot assign {value.RawValue}({TypeCaster.GetValueType(value)}) to {name}({TypeCaster.GetValueType(current)})"
             );
     }
 

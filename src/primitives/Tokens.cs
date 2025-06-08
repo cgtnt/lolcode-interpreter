@@ -1,3 +1,7 @@
+using System.Collections.Generic;
+using System.Linq;
+using static TokenizationPrimitives.TokenType;
+
 namespace TokenizationPrimitives;
 
 public class Token
@@ -111,6 +115,77 @@ public enum TokenType
     MOD, // mod of
     MAX, // biggr of
     MIN, // smallr of
-    INCREMENT, // uppin
-    DECREMENT, // nerfin
+}
+
+public class TokenTranslation
+{
+    public static Dictionary<string, TokenType> keywordToToken = new Dictionary<string, TokenType>
+    {
+        { "HAI", BEGIN },
+        { "KTHXBYE", END },
+        { "IT", TEMP },
+        { "I HAS A", DECLARE_VAR },
+        { "ITZ", DECLARE_SET_VAR },
+        { "ITZ A", DECLARE_TYPE_VAR },
+        { "YARN", TI_STRING },
+        { "TROOF", TI_BOOL },
+        { "NUMBR", TI_INT },
+        { "NUMBAR", TI_FLOAT },
+        { "NOOB", TI_UNTYPED },
+        { "R", ASSIGN },
+        { "GIMMEH", READ_STDIN },
+        { "VISIBLE", WRITE_STDOUT },
+        { "O RLY?", IF },
+        { "YA RLY", THEN },
+        { "NO WAI", ELSE },
+        { "OIC", END_IF },
+        { "YR", ARG },
+        { "IM IN YR", LOOP_BEGIN },
+        { "IM OUTTA YR", LOOP_END },
+        { "TILL", UNTIL },
+        { "WILE", WHILE },
+        { "GTFO", RETURN_NULL },
+        { "HOW IZ I", FUNC_BEGIN },
+        { "IF U SAY SO", FUNC_END },
+        { "FOUND YR", RETURN_VAL },
+        { "I IZ", FUNC_CALL },
+        { "SMOOSH", CONCAT },
+        { "AN", AND },
+        { "MKAY", END_INF },
+        { "BOTH OF", BOOL_AND },
+        { "EITHER OF", BOOL_OR },
+        { "WON OF", BOOL_XOR },
+        { "NOT", BOOL_NOT },
+        { "ALL OF", BOOL_AND_INF },
+        { "ANY OF", BOOL_OR_INF },
+        { "BOTH SAEM", EQUAL },
+        { "DIFFRINT", NOT_EQUAL },
+        { "SUM OF", PLUS },
+        { "DIFF OF", MINUS },
+        { "PRODUKT OF", TIMES },
+        { "QUOSHUNT OF", QUOTIENT },
+        { "MOD OF", MOD },
+        { "BIGGR OF", MAX },
+        { "SMALLR OF", MIN },
+        { "WIN", TRUE },
+        { "FAIL", FALSE },
+        { "!", BANG },
+    };
+
+    public static Dictionary<TokenType, string> tokenToKeyword = swap(keywordToToken);
+
+    public static string[] TokensToKeywords(params TokenType[] types) =>
+        types.Select(t => tokenToKeyword[t]).ToArray();
+
+    static Dictionary<V, K> swap<K, V>(Dictionary<K, V> original)
+        where K : notnull // K,V need to be notnull -> implements GetHashCode() otherwise compiler warns
+        where V : notnull
+    {
+        Dictionary<V, K> result = new();
+
+        foreach ((K key, V value) in original)
+            result.Add(value, key);
+
+        return result;
+    }
 }

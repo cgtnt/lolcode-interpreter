@@ -1,5 +1,7 @@
 using System;
 using ASTPrimitives;
+using TokenizationPrimitives;
+using static TokenizationPrimitives.TokenType;
 
 namespace TypePrimitives;
 
@@ -55,6 +57,29 @@ public record FunctionValue(BlockStmt block, string[] parameters) : Value
 // implicit type casting
 public static class TypeCaster
 {
+    public static string GetValueType(Value value)
+    {
+        switch (value)
+        {
+            case BoolValue v:
+                return TokenTranslation.TokensToKeywords(TI_BOOL)[0];
+            case UntypedValue v:
+                return TokenTranslation.TokensToKeywords(TI_UNTYPED)[0];
+            case StringValue v:
+                return TokenTranslation.TokensToKeywords(TI_STRING)[0];
+            case IntValue v:
+                return TokenTranslation.TokensToKeywords(TI_INT)[0];
+            case FloatValue v:
+                return TokenTranslation.TokensToKeywords(TI_FLOAT)[0];
+            case FunctionValue v:
+                return "FUNCTION";
+            default:
+                throw new CriticalError(
+                    new TypeCastingException($"Unknown type {value.GetType()}")
+                );
+        }
+    }
+
     public static BoolValue CastBool(Value value)
     {
         switch (value)
@@ -70,7 +95,7 @@ public static class TypeCaster
             case FloatValue v:
                 return new BoolValue(v.Value != 0);
             default:
-                throw new TypeCastingException($"Cannot cast {value.GetType()} to TROOF");
+                throw new TypeCastingException($"Cannot cast {GetValueType(value)} to TROOF");
         }
     }
 
@@ -90,7 +115,7 @@ public static class TypeCaster
             case BoolValue v:
                 return new IntValue(v.Value ? 1 : 0);
             default:
-                throw new TypeCastingException($"Cannot cast {value.GetType()} to NUMBR");
+                throw new TypeCastingException($"Cannot cast {GetValueType(value)} to NUMBR");
         }
     }
 
@@ -110,7 +135,7 @@ public static class TypeCaster
             case BoolValue v:
                 return new FloatValue(v.Value ? 1 : 0);
             default:
-                throw new TypeCastingException($"Cannot cast {value.GetType()} to NUMBAR");
+                throw new TypeCastingException($"Cannot cast {GetValueType(value)} to NUMBAR");
         }
     }
 
@@ -127,7 +152,7 @@ public static class TypeCaster
             case BoolValue v:
                 return new StringValue(v.Value ? "WIN" : "FAIL");
             default:
-                throw new TypeCastingException($"Cannot cast {value.GetType()} to YARN");
+                throw new TypeCastingException($"Cannot cast {GetValueType(value)} to YARN");
         }
     }
 }
