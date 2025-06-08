@@ -37,7 +37,7 @@ public class Lexer
         string lexeme;
 
         // skip whitespace
-        while (CharChecker.isWhitespace(peekNextChar()))
+        while (CharChecker.isWhitespace(peekNextChar()) || peekNextChar() == '\r')
             consumeNextChar();
 
         start = next;
