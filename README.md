@@ -1,4 +1,4 @@
-# Interpeter
+# Interpreter
 An interpreter for a subset of the [LOLCODE esoteric language](http://www.lolcode.org/).
 Usage:
 ```
@@ -27,15 +27,15 @@ KTHXBYE
 
 ### Variables 
 - All variable scope is local to the enclosing function or command block;
-- Naming and declaration are the same as in the [origianal sepcification](https://github.com/justinmeza/lolcode-spec/blob/master/v1.3/lolcode-spec-v1.3.md#naming);
+- Naming and declaration are the same as in the [original specification](https://github.com/justinmeza/lolcode-spec/blob/master/v1.3/lolcode-spec-v1.3.md#naming);
 - Variables are only accessible after declaration;
-- Assignment: Assignment of a variable is accomplished with an assignment statement: ```<variable> R <expression>```. The RHS expression must be resolved to a value of matching type of the decalared variable, or any type if the variable is of type NOOB.
+- Assignment: Assignment of a variable is accomplished with an assignment statement: ```<variable> R <expression>```. The RHS expression must resolve to a value of matching type of the declared variable, or any type if the variable is of type NOOB.
 - Types are the same as specified in the [original specification](https://github.com/justinmeza/lolcode-spec/blob/master/v1.3/lolcode-spec-v1.3.md#types), however string escape sequences and explicit casting are not supported (only implicit);
 - Type NOOB implicitly casts to zero values of each type;
 - Deallocation, arrays and SRS casting are not supported;
 
 ### Operators
-- Operators are treated as specificied in the [original specification](https://github.com/justinmeza/lolcode-spec/blob/master/v1.3/lolcode-spec-v1.3.md#operators);
+- Operators are treated as specified in the [original specification](https://github.com/justinmeza/lolcode-spec/blob/master/v1.3/lolcode-spec-v1.3.md#operators);
 
 ### Terminal I/O
 - I/O is treated as specified in the [original specification](https://github.com/justinmeza/lolcode-spec/blob/master/v1.3/lolcode-spec-v1.3.md#inputoutput);
