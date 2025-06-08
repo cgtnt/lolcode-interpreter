@@ -9,11 +9,11 @@ using TokenizationPrimitives;
 
 class Program
 {
-    static string EXECUTABLE_NAME = "lolcode";
+    static string EXECUTABLE_NAME = "[executable]";
 
     static void Usage()
     {
-        Console.WriteLine($"Usage: {EXECUTABLE_NAME} [file]");
+        Console.WriteLine($"Usage: {EXECUTABLE_NAME} <source file>");
     }
 
     static void ProcessFile(string file)

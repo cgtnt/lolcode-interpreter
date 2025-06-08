@@ -17,7 +17,7 @@ public class Lexer
         s = sourceCode;
     }
 
-    bool isLexemeTerminator(char c)
+    bool isLexemeTerminator(char c) // lexeme terminators, should be treated as separate tokens
     {
         return c switch
         {
@@ -43,8 +43,7 @@ public class Lexer
         start = next;
         c = consumeNextChar();
 
-        // preserve newline and comma
-        if (CharChecker.isCommandTerminator(c))
+        if (CharChecker.isCommandTerminator(c)) // consume newline, comma and !
         {
             lexeme = $"{c}";
 
@@ -53,7 +52,7 @@ public class Lexer
                 line++;
             }
         }
-        else if (c == '"')
+        else if (c == '"') // consume string
         { // preserve whitespace inside strings
             do
             {
@@ -65,7 +64,7 @@ public class Lexer
 
             lexeme = s[start..next];
         }
-        else
+        else // consume anything else
         {
             while (!atEOF() && !isLexemeTerminator(peekNextChar()))
             {

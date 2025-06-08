@@ -65,6 +65,11 @@ public class Parser
             );
     }
 
+    Token expectStmtTerm()
+    {
+        return expect(COMMAND_TERMINATOR, EOF);
+    }
+
     void synchronize()
     {
         while (!isType(COMMAND_TERMINATOR))
@@ -79,16 +84,16 @@ public class Parser
         if (skipNextType(DECLARE_SET_VAR))
         {
             Expr value = expression();
-            expect(COMMAND_TERMINATOR, EOF);
 
+            expectStmtTerm();
             return new VariableDeclareStmt(identifier, value: value);
         }
 
         if (skipNextType(DECLARE_TYPE_VAR))
         {
             Token type = expect(TI_INT, TI_STRING, TI_BOOL, TI_FLOAT);
-            expect(COMMAND_TERMINATOR, EOF);
 
+            expectStmtTerm();
             return new VariableDeclareStmt(identifier, type: type.type);
         }
 
@@ -134,19 +139,19 @@ public class Parser
             Token[] param = parameters();
 
             BlockStmt block = blockStatement(FUNC_END);
-            expect(COMMAND_TERMINATOR, EOF);
 
+            expectStmtTerm();
             return new FunctionDeclareStmt(identifier, block, param);
         }
 
         if (skipNextType(RETURN_VAL, RETURN_NULL)) // function return
         {
-            if (skipNextType(COMMAND_TERMINATOR, EOF))
+            if (skipNextType(COMMAND_TERMINATOR, EOF)) // return NOOB
                 return new ReturnStmt();
 
-            Expr returnVal = expression();
-            expect(COMMAND_TERMINATOR, EOF);
+            Expr returnVal = expression(); // return value
 
+            expectStmtTerm();
             return new ReturnStmt(returnVal);
         }
 
@@ -156,8 +161,8 @@ public class Parser
             expect(THEN);
             BlockStmt trueBlock = blockStatement(ELSE);
             BlockStmt falseBlock = blockStatement(END_IF);
-            expect(COMMAND_TERMINATOR, EOF);
 
+            expectStmtTerm();
             return new IfStmt(trueBlock, falseBlock);
         }
 
@@ -176,8 +181,8 @@ public class Parser
             expect(WHILE);
             Expr condition = expression();
             BlockStmt block = blockStatement(LOOP_END);
-            expect(COMMAND_TERMINATOR, EOF);
 
+            expectStmtTerm();
             return new LoopStmt(block, condition, variable);
         }
 
@@ -190,7 +195,7 @@ public class Parser
             if (statement is not null)
                 return statement;
 
-            expect(COMMAND_TERMINATOR, EOF);
+            expectStmtTerm();
             return new VariableDeclareStmt(identifier);
         }
 
@@ -205,14 +210,16 @@ public class Parser
             }
 
             bool newline = skipNextType(BANG);
-            expect(EOF, COMMAND_TERMINATOR);
+
+            expectStmtTerm();
             return new PrintStmt(newline, line, content.ToArray());
         }
 
         if (skipNextType(READ_STDIN)) // reading input
         {
             Token identifier = expect(T_IDENTIFIER);
-            expect(EOF, COMMAND_TERMINATOR);
+
+            expectStmtTerm();
             return new InputStmt(identifier);
         }
 
@@ -223,7 +230,8 @@ public class Parser
             if (skipNextType(ASSIGN))
             {
                 Expr right = expression();
-                expect(EOF, COMMAND_TERMINATOR);
+
+                expectStmtTerm();
                 return new VariableAssignStmt(identifier, right);
             }
             else
@@ -231,7 +239,7 @@ public class Parser
         }
 
         Expr expr = expression(); // expression-statements
-        Token terminator = expect(EOF, COMMAND_TERMINATOR);
+        Token terminator = expectStmtTerm();
         return new ExpressionStmt(expr, terminator.line);
     }
 
