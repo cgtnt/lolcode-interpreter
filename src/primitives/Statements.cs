@@ -8,7 +8,7 @@ using static TokenizationPrimitives.TokenType;
 namespace ASTPrimitives;
 
 /// <summary>
-/// A LOLCODE statement. See <see href="https://github.com/cgtnt/lolcode-interpreter?tab=readme-ov-file#language-features"/>language implementation specification</see>.
+/// A LOLCODE statement. See <see href="https://github.com/cgtnt/lolcode-interpreter?tab=readme-ov-file#language-features">language implementation specification</see>.
 /// </summary>
 public interface Stmt
 {

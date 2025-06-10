@@ -6,7 +6,7 @@ using static TokenizationPrimitives.TokenType;
 namespace TypePrimitives;
 
 /// <summary>
-/// Represents a value in the LOLCODE language. For list of value types, see <see href="https://github.com/cgtnt/lolcode-interpreter?tab=readme-ov-file#language-features"/>language implementation specification</see>.
+/// Represents a value in the LOLCODE language. For a list of value types, see <see href="https://github.com/cgtnt/lolcode-interpreter?tab=readme-ov-file#language-features">language implementation specification</see>.
 /// </summary>
 public abstract record Value
 {

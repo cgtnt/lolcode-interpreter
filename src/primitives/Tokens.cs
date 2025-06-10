@@ -21,7 +21,7 @@ public class Token
 }
 
 /// <summary>
-/// Type of LOLCODE token. See <see href="https://github.com/cgtnt/lolcode-interpreter?tab=readme-ov-file#language-features"/>language implementation specification</see>.
+/// Type of LOLCODE token. See <see href="https://github.com/cgtnt/lolcode-interpreter?tab=readme-ov-file#language-features">language implementation specification</see>.
 /// </summary>
 public enum TokenType
 {

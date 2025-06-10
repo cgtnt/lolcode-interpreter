@@ -1,0 +1,394 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>src</name>
+    </assembly>
+    <members>
+        <member name="M:Interpretation.Interpreter.Interpret(ASTPrimitives.Stmt)">
+            <summary>
+            Interpret <see cref="T:ASTPrimitives.Stmt"/>.
+            </summary>
+        </member>
+        <member name="M:Lexing.Lexer.#ctor(System.String)">
+            <summary>
+            Creates a new Lexer.
+            </summary>
+            <param name="sourceCode">LOLCODE source code.</param>
+        </member>
+        <member name="M:Lexing.Lexer.consumeNextLexeme">
+            <summary>
+            Consumes next lexeme.
+            </summary>
+        </member>
+        <member name="M:Lexing.Lexer.consumeNextChar">
+            <summary>
+            Return next char and advance next pointer.
+            </summary>
+        </member>
+        <member name="M:Lexing.Lexer.peekNextChar">
+            <summary>
+            Return next char and without advancing next pointer.
+            </summary>
+        </member>
+        <member name="M:Lexing.Lexer.atEOF">
+            <summary>
+            Returns true if next pointer is at end of file.
+            </summary>
+        </member>
+        <member name="M:Lexing.Lexer.Lex">
+            <summary>
+            Lex LOLCODE source code.
+            </summary>
+            <returns>List of lexemes to be passed to <see cref="T:Tokenization.Tokenizer"/></returns>
+        </member>
+        <member name="M:Parsing.Parser.#ctor(System.Collections.Generic.List{TokenizationPrimitives.Token})">
+            <summary>
+            Create Parser.
+            </summary>
+            <param name="tokens">List of LOLCODE tokens. See <see cref="T:TokenizationPrimitives.Token"/></param>
+        </member>
+        <member name="M:Parsing.Parser.Parse(ASTPrimitives.Stmt@)">
+            <summary>
+            Parse list of tokens stored in Parser.
+            </summary>
+        </member>
+        <member name="M:Parsing.Parser.consumeNext">
+            <summary>
+            Return next Token and advance next pointer.
+            </summary>
+        </member>
+        <member name="M:Parsing.Parser.peekNext">
+            <summary>
+            Return next Token without advancing next pointer.
+            </summary>
+        </member>
+        <member name="M:Parsing.Parser.atEOF">
+            <summary>
+            Returns true if next pointer is at end of file.
+            </summary>
+        </member>
+        <member name="M:Parsing.Parser.nextIsType(TokenizationPrimitives.TokenType[])">
+            <summary>
+            Return true if next Token is of specified type. See <see cref="T:TokenizationPrimitives.TokenType"/>
+            </summary>
+        </member>
+        <member name="M:Parsing.Parser.skipIfNextIsType(TokenizationPrimitives.TokenType[])">
+            <summary>
+            Consume next Token if it is of specified type. See <see cref="T:TokenizationPrimitives.TokenType"/>
+            </summary>
+        </member>
+        <member name="M:Parsing.Parser.expect(TokenizationPrimitives.TokenType[])">
+            <summary>
+            Consume next token if it is of specified type, or throw exception. See <see cref="T:TokenizationPrimitives.TokenType"/>
+            </summary>
+        </member>
+        <member name="M:Parsing.Parser.synchronize">
+            <summary>
+            Skip to beginning of next statement.
+            </summary>
+        </member>
+        <member name="M:Parsing.Parser.stictVariableDeclare(TokenizationPrimitives.Token)">
+            <summary>
+            Parse variable declaration statement with immediate value or type.
+            </summary>
+        </member>
+        <member name="M:Parsing.Parser.blockStatement(TokenizationPrimitives.TokenType)">
+            <summary>
+            Parse block of statements.
+            </summary>
+        </member>
+        <member name="M:Parsing.Parser.statement">
+            <summary>
+            Parse statement. See <see cref="T:ASTPrimitives.Stmt"/>
+            </summary>
+        </member>
+        <member name="M:Parsing.Parser.naryExpr">
+            <summary>
+            Parse expression of unknown arity.
+            </summary>
+            <returns>Nested binary expression</returns>
+        </member>
+        <member name="M:Parsing.Parser.parameters">
+            <summary>
+            Parse function declaration parameters list.
+            </summary>
+            <returns>List of <see cref="T:TokenizationPrimitives.Token"/> to be used as parameter identifies inside function body</returns>
+        </member>
+        <member name="M:Parsing.Parser.arguments">
+            <summary>
+            Parse function call arguments list.
+            </summary>
+            <returns>List of <see cref="T:ASTPrimitives.Expr"/> to be evaluated and passed to function as arguments</returns>
+        </member>
+        <member name="M:Parsing.Parser.expression">
+            <summary>
+            Parse expression. See <see cref="T:ASTPrimitives.Expr"/>
+            </summary>
+        </member>
+        <member name="T:ASTPrimitives.Expr">
+            <summary>
+            A LOLCODE expression. See <see href="https://github.com/cgtnt/lolcode-interpreter?tab=readme-ov-file#language-features">language implementation specification</see>.
+            </summary>
+        </member>
+        <member name="M:ASTPrimitives.Expr.evaluate(InterpretationPrimitives.Scope)">
+            <summary>
+            Evaluates LOLCODE statement.
+            </summary>
+            <param name="s">Scope containing variables and functions accessible by the expression.</param>
+            <returns>Value expression evaluated to.</returns>
+        </member>
+        <member name="T:ASTPrimitives.BinaryExpr">
+            <inheritdoc/>
+        </member>
+        <member name="T:ASTPrimitives.UnaryExpr">
+            <inheritdoc/>
+        </member>
+        <member name="T:ASTPrimitives.VariableExpr">
+            <inheritdoc/>
+        </member>
+        <member name="T:ASTPrimitives.FunctionCallExpr">
+            <inheritdoc/>
+        </member>
+        <member name="T:ASTPrimitives.LiteralExpr">
+            <inheritdoc/>
+        </member>
+        <member name="T:ASTPrimitives.Stmt">
+            <summary>
+            A LOLCODE statement. See <see href="https://github.com/cgtnt/lolcode-interpreter?tab=readme-ov-file#language-features">language implementation specification</see>.
+            </summary>
+        </member>
+        <member name="M:ASTPrimitives.Stmt.evaluate(InterpretationPrimitives.Scope)">
+            <summary>
+            Evaluates LOLCODE statement.
+            </summary>
+            <param name="scope">Scope containing variables and functions accessible by the statement.</param>
+        </member>
+        <member name="T:ASTPrimitives.VariableDeclareStmt">
+            <inheritdoc/>
+        </member>
+        <member name="T:ASTPrimitives.VariableAssignStmt">
+            <inheritdoc/>
+        </member>
+        <member name="T:ASTPrimitives.PrintStmt">
+            <inheritdoc/>
+        </member>
+        <member name="T:ASTPrimitives.InputStmt">
+            <inheritdoc/>
+        </member>
+        <member name="T:ASTPrimitives.IfStmt">
+            <inheritdoc/>
+        </member>
+        <member name="T:ASTPrimitives.LoopStmt">
+            <inheritdoc/>
+        </member>
+        <member name="T:ASTPrimitives.FunctionDeclareStmt">
+            <inheritdoc/>
+        </member>
+        <member name="T:ASTPrimitives.ReturnStmt">
+            <inheritdoc/>
+        </member>
+        <member name="T:ASTPrimitives.BlockStmt">
+            <inheritdoc/>
+        </member>
+        <member name="T:ASTPrimitives.ExpressionStmt">
+            <inheritdoc/>
+        </member>
+        <member name="M:InterpretationPrimitives.ReturnValue.#ctor(TypePrimitives.Value,System.Int32)">
+            <summary>
+            Used to unwind callstack when evaluating a LOLCODE function and return a value. Do not use outside of function body.
+            </summary>
+        </member>
+        <member name="T:InterpretationPrimitives.Scope">
+            <summary>
+            A container holding variables and functions. Indexed by name.
+            </summary>
+        </member>
+        <member name="M:InterpretationPrimitives.Scope.#ctor(InterpretationPrimitives.Scope)">
+            <summary>
+            Create a new scope.
+            </summary>
+            <param name="parent">Parent scope whose variables can be transitively read by <see cref="M:InterpretationPrimitives.Scope.GetVar(System.String)"/>.</param>
+        </member>
+        <member name="M:InterpretationPrimitives.Scope.DefineVar(System.String,TypePrimitives.Value)">
+            <summary>
+            Define variable in current scope. Do not rederfine existing variables, for assignment see <see cref="M:InterpretationPrimitives.Scope.SetVar(System.String,TypePrimitives.Value)"/>. Cannot define variables in parent scopes.
+            </summary>
+        </member>
+        <member name="M:InterpretationPrimitives.Scope.SetVar(System.String,TypePrimitives.Value)">
+            <summary>
+            Set value of variable already defined in current scope. To define a variable, see <see cref="M:InterpretationPrimitives.Scope.DefineVar(System.String,TypePrimitives.Value)"/>. Cannot change variables of parent scopes.
+            </summary>
+        </member>
+        <member name="M:InterpretationPrimitives.Scope.SetOrDefineVar(System.String,TypePrimitives.Value)">
+            <summary>
+            Set variable, or define it if it does not exist in the current scope. Cannot change variables of parent scopes.
+            </summary>
+        </member>
+        <member name="M:InterpretationPrimitives.Scope.GetVar(System.String)">
+            <summary>
+            Get value of variable. Transitively searches current scope and all parent scopes for variable, then throws an exception if variable is not found.
+            </summary>
+        </member>
+        <member name="T:TokenizationPrimitives.TokenType">
+            <summary>
+            Type of LOLCODE token. See <see href="https://github.com/cgtnt/lolcode-interpreter?tab=readme-ov-file#language-features">language implementation specification</see>.
+            </summary>
+        </member>
+        <member name="M:TokenizationPrimitives.TokenTranslation.TokensToKeywords(TokenizationPrimitives.TokenType[])">
+            <summary>
+            Translates given TokenTypes to associated keywords in the LOLCODE langauge. See <see cref="T:TokenizationPrimitives.TokenType"/>.
+            </summary>
+        </member>
+        <member name="T:TypePrimitives.Value">
+            <summary>
+            Represents a value in the LOLCODE language. For a list of value types, see <see href="https://github.com/cgtnt/lolcode-interpreter?tab=readme-ov-file#language-features">language implementation specification</see>.
+            </summary>
+        </member>
+        <member name="P:TypePrimitives.Value.RawValue">
+            <summary>
+            Get value as underlying C# type used interally by the interpreter.
+            </summary>
+        </member>
+        <member name="T:TypePrimitives.IntValue">
+            <summary>
+            Represents a NUMBR in the LOLCODE language.
+            </summary>
+        </member>
+        <member name="M:TypePrimitives.IntValue.#ctor(System.Int32)">
+            <summary>
+            Represents a NUMBR in the LOLCODE language.
+            </summary>
+        </member>
+        <member name="M:TypePrimitives.IntValue.ToString">
+            <inheritdoc/>
+        </member>
+        <member name="T:TypePrimitives.FloatValue">
+            <summary>
+            Represents a NUMBAR in the LOLCODE language.
+            </summary>
+        </member>
+        <member name="M:TypePrimitives.FloatValue.#ctor(System.Single)">
+            <summary>
+            Represents a NUMBAR in the LOLCODE language.
+            </summary>
+        </member>
+        <member name="M:TypePrimitives.FloatValue.ToString">
+            <inheritdoc/>
+        </member>
+        <member name="T:TypePrimitives.StringValue">
+            <summary>
+            Represents a YARN in the LOLCODE language.
+            </summary>
+        </member>
+        <member name="M:TypePrimitives.StringValue.#ctor(System.String)">
+            <summary>
+            Represents a YARN in the LOLCODE language.
+            </summary>
+        </member>
+        <member name="M:TypePrimitives.StringValue.ToString">
+            <inheritdoc/>
+        </member>
+        <member name="T:TypePrimitives.BoolValue">
+            <summary>
+            Represents a TROOF in the LOLCODE language.
+            </summary>
+        </member>
+        <member name="M:TypePrimitives.BoolValue.#ctor(System.Boolean)">
+            <summary>
+            Represents a TROOF in the LOLCODE language.
+            </summary>
+        </member>
+        <member name="M:TypePrimitives.BoolValue.ToString">
+            <inheritdoc/>
+        </member>
+        <member name="T:TypePrimitives.UntypedValue">
+            <summary>
+            Represents a NOOB in the LOLCODE language.
+            </summary>
+        </member>
+        <member name="M:TypePrimitives.UntypedValue.#ctor">
+            <summary>
+            Represents a NOOB in the LOLCODE language.
+            </summary>
+        </member>
+        <member name="M:TypePrimitives.UntypedValue.ToString">
+            <inheritdoc/>
+        </member>
+        <member name="T:TypePrimitives.FunctionValue">
+            <summary>
+            Represents a function in the LOLCODE language.
+            </summary>
+        </member>
+        <member name="M:TypePrimitives.FunctionValue.#ctor(ASTPrimitives.BlockStmt,System.String[])">
+            <summary>
+            Represents a function in the LOLCODE language.
+            </summary>
+        </member>
+        <member name="P:TypePrimitives.FunctionValue.RawValue">
+            <inheritdoc/>
+        </member>
+        <member name="M:TypePrimitives.TypeCaster.GetValueType(TypePrimitives.Value)">
+            <summary>
+            Get LOLCODE keyword associated with the type of provided <see cref="T:TypePrimitives.Value"/>.
+            </summary>
+        </member>
+        <member name="M:Program.Usage">
+            <summary>
+            Print CLI usage instructions.
+            </summary>
+        </member>
+        <member name="M:Program.ProcessFile(System.String)">
+            <summary>
+            Process contents of given file as LOLCODE source code.
+            </summary>
+            <param name="file">Path to source file.</param>
+        </member>
+        <member name="M:Program.Process(System.String)">
+            <summary>
+            Process given string as LOLCODE source code.
+            </summary>
+            <param name="sourceCode">LOLCODE source code.</param>
+        </member>
+        <member name="M:Tokenization.Tokenizer.atEOF">
+            <summary>
+            Return true if next pointer is at end of file.
+            </summary>
+        </member>
+        <member name="M:Tokenization.Tokenizer.isInteger(System.String)">
+            <summary>
+            Return true if given lexeme is a valid NUMBR in LOLCODE.
+            </summary>
+        </member>
+        <member name="M:Tokenization.Tokenizer.isFloat(System.String)">
+            <summary>
+            Return true if given lexeme is a valid NUMBAR in LOLCODE.
+            </summary>
+        </member>
+        <member name="M:Tokenization.Tokenizer.isString(System.String)">
+            <summary>
+            Return true if given lexeme is a valid YARN in LOLCODE.
+            </summary>
+        </member>
+        <member name="M:Tokenization.Tokenizer.isIdentifier(System.String)">
+            <summary>
+            Return true if given lexeme is a valid identtifier in LOLCODE.
+            </summary>
+        </member>
+        <member name="M:Tokenization.Tokenizer.nextToken">
+            <summary>
+            Return next Token and advance next pointer.
+            </summary>
+        </member>
+        <member name="M:Tokenization.Tokenizer.Tokenize">
+            <summary>
+            Tokenize <see cref="T:Lexing.Lexer"/> output.
+            </summary>
+            <returns>List of tokens to be passed to <see cref="T:Parsing.Parser"/></returns>
+        </member>
+        <member name="M:EvaluationUtils.EvalUtils.TryExecuteOp(TokenizationPrimitives.Token,TypePrimitives.Value,TypePrimitives.Value,EvaluationUtils.OperationType,System.Func{System.Int32,System.Int32,System.Int32},System.Func{System.Single,System.Single,System.Single},System.Func{System.Boolean,System.Boolean,System.Boolean},System.Func{System.String,System.String,System.String})">
+            <summary>
+            Tries executing given operation on given values with implicit LOLCODE type casting, or throws exception if casting is forbidden.
+            </summary>
+        </member>
+    </members>
+</doc>

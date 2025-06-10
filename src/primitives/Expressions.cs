@@ -9,14 +9,14 @@ using static TokenizationPrimitives.TokenType;
 namespace ASTPrimitives;
 
 /// <summary>
-/// A LOLCODE expression. See <see href="https://github.com/cgtnt/lolcode-interpreter?tab=readme-ov-file#language-features"/>language implementation specification</see>.
+/// A LOLCODE expression. See <see href="https://github.com/cgtnt/lolcode-interpreter?tab=readme-ov-file#language-features">language implementation specification</see>.
 /// </summary>
 public interface Expr
 {
     /// <summary>
     /// Evaluates LOLCODE statement.
     /// </summary>
-    /// <param name="scope">Scope containing variables and functions accessible by the expression.</param>
+    /// <param name="s">Scope containing variables and functions accessible by the expression.</param>
     /// <returns>Value expression evaluated to.</returns>
     public Value evaluate(Scope s);
 }
