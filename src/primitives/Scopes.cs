@@ -3,11 +3,18 @@ using TypePrimitives;
 
 namespace InterpretationPrimitives;
 
+/// <summary>
+/// A container holding variables and functions. Indexed by name.
+/// </summary>
 public class Scope
 {
     public Scope? parent { get; private set; }
     Dictionary<string, Value> variables;
 
+    /// <summary>
+    /// Create a new scope.
+    /// </summary>
+    /// <param name="parent">Parent scope whose variables can be transitively read by <see cref="GetVar(string)"/>.</param>
     public Scope(Scope? parent = null)
     {
         this.parent = parent;
@@ -15,6 +22,9 @@ public class Scope
         variables.Add("IT", new UntypedValue()); // temporary variable IT
     }
 
+    /// <summary>
+    /// Define variable in current scope. Do not rederfine existing variables, for assignment see <see cref="SetVar(string, Value)"/>. Cannot define variables in parent scopes.
+    /// </summary>
     public void DefineVar(string name, Value value)
     {
         if (variables.ContainsKey(name))
@@ -23,6 +33,9 @@ public class Scope
         variables.Add(name, value);
     }
 
+    /// <summary>
+    /// Set value of variable already defined in current scope. To define a variable, see <see cref="DefineVar(string, Value)"/>. Cannot change variables of parent scopes.
+    /// </summary>
     public void SetVar(string name, Value value)
     {
         if (!variables.TryGetValue(name, out Value? current))
@@ -42,6 +55,9 @@ public class Scope
             );
     }
 
+    /// <summary>
+    /// Set variable, or define it if it does not exist in the current scope. Cannot change variables of parent scopes.
+    /// </summary>
     public void SetOrDefineVar(string name, Value value)
     {
         try
@@ -54,6 +70,9 @@ public class Scope
         }
     }
 
+    /// <summary>
+    /// Get value of variable. Transitively searches current scope and all parent scopes for variable, then throws an exception if variable is not found.
+    /// </summary>
     public Value GetVar(string name)
     {
         if (variables.TryGetValue(name, out Value? variable))

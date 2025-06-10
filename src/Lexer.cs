@@ -12,6 +12,10 @@ public class Lexer
     int next;
     int line = 1;
 
+    /// <summary>
+    /// Creates a new Lexer.
+    /// </summary>
+    /// <param name="sourceCode">LOLCODE source code.</param>
     public Lexer(string sourceCode)
     {
         s = sourceCode;
@@ -31,6 +35,9 @@ public class Lexer
         };
     }
 
+    /// <summary>
+    /// Consumes next lexeme.
+    /// </summary>
     string consumeNextLexeme()
     {
         char c;
@@ -77,12 +84,25 @@ public class Lexer
         return lexeme;
     }
 
+    /// <summary>
+    /// Return next char and advance next pointer.
+    /// </summary>
     char consumeNextChar() => s[next++];
 
+    /// <summary>
+    /// Return next char and without advancing next pointer.
+    /// </summary>
     char peekNextChar() => s[next];
 
+    /// <summary>
+    /// Returns true if next pointer is at end of file.
+    /// </summary>
     bool atEOF() => next >= s.Length;
 
+    /// <summary>
+    /// Lex LOLCODE source code.
+    /// </summary>
+    /// <returns>List of lexemes to be passed to <see cref="Tokenization.Tokenizer"/></returns>
     public List<string> Lex()
     {
         while (!atEOF())

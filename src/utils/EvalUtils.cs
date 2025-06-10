@@ -21,6 +21,9 @@ public enum OperationType
 public static class EvalUtils
 {
     // wrapper for executing logical and algebraic operations during expression evaluation
+    /// <summary>
+    /// Tries executing given operation on given values with implicit LOLCODE type casting, or throws exception if casting is forbidden.
+    /// </summary>
     public static Value TryExecuteOp(
         Token oper,
         Value first,

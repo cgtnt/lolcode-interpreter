@@ -23,9 +23,15 @@ public class Tokenizer
     }
 
     // tokenization helpers
+    /// <summary>
+    /// Return true if next pointer is at end of file.
+    /// </summary>
     bool atEOF() => next >= src.Length;
 
     // type identification helpers
+    /// <summary>
+    /// Return true if given lexeme is a valid NUMBR in LOLCODE.
+    /// </summary>
     bool isInteger(string lexeme)
     {
         foreach (char c in lexeme)
@@ -37,6 +43,9 @@ public class Tokenizer
         return true;
     }
 
+    /// <summary>
+    /// Return true if given lexeme is a valid NUMBAR in LOLCODE.
+    /// </summary>
     bool isFloat(string lexeme)
     {
         bool decimalDotReached = false;
@@ -52,8 +61,14 @@ public class Tokenizer
         return true;
     }
 
+    /// <summary>
+    /// Return true if given lexeme is a valid YARN in LOLCODE.
+    /// </summary>
     bool isString(string lexeme) => (lexeme.Length >= 2 && lexeme[0] == '"' && lexeme[^1] == '"');
 
+    /// <summary>
+    /// Return true if given lexeme is a valid identtifier in LOLCODE.
+    /// </summary>
     bool isIdentifier(string lexeme)
     {
         if (lexeme.Length < 1 || !char.IsLetter(lexeme[0]))
@@ -69,6 +84,9 @@ public class Tokenizer
     }
 
     // tokenization
+    /// <summary>
+    /// Return next Token and advance next pointer.
+    /// </summary>
     Token nextToken()
     {
         if (CharChecker.isCommandTerminator(src[next]))
@@ -152,6 +170,10 @@ public class Tokenizer
         return new Token(type, match, line);
     }
 
+    /// <summary>
+    /// Tokenize <see cref="Lexing.Lexer"/> output.
+    /// </summary>
+    /// <returns>List of tokens to be passed to <see cref="Parsing.Parser"/></returns>
     public List<Token> Tokenize()
     {
         while (!atEOF())

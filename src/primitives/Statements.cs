@@ -7,12 +7,20 @@ using static TokenizationPrimitives.TokenType;
 
 namespace ASTPrimitives;
 
+/// <summary>
+/// A LOLCODE statement. See <see href="https://github.com/cgtnt/lolcode-interpreter?tab=readme-ov-file#language-features"/>language implementation specification</see>.
+/// </summary>
 public interface Stmt
 {
+    /// <summary>
+    /// Evaluates LOLCODE statement.
+    /// </summary>
+    /// <param name="scope">Scope containing variables and functions accessible by the statement.</param>
     public void evaluate(Scope scope);
 }
 
 // variable handling statements
+/// <inheritdoc/>
 public class VariableDeclareStmt : Stmt
 {
     string name;
@@ -59,6 +67,7 @@ public class VariableDeclareStmt : Stmt
     }
 }
 
+/// <inheritdoc/>
 public class VariableAssignStmt : Stmt
 {
     string name;
@@ -86,6 +95,7 @@ public class VariableAssignStmt : Stmt
 }
 
 // I/O statements
+/// <inheritdoc/>
 public class PrintStmt : Stmt
 {
     Expr[] content;
@@ -121,6 +131,7 @@ public class PrintStmt : Stmt
     }
 }
 
+/// <inheritdoc/>
 public class InputStmt : Stmt
 {
     string name;
@@ -148,6 +159,7 @@ public class InputStmt : Stmt
 }
 
 // control flow statements
+/// <inheritdoc/>
 public class IfStmt : Stmt
 {
     BlockStmt trueBlock;
@@ -171,6 +183,7 @@ public class IfStmt : Stmt
     }
 }
 
+/// <inheritdoc/>
 public class LoopStmt : Stmt
 {
     BlockStmt block;
@@ -198,6 +211,7 @@ public class LoopStmt : Stmt
 }
 
 // function statements
+/// <inheritdoc/>
 public class FunctionDeclareStmt : Stmt
 {
     string name;
@@ -228,6 +242,7 @@ public class FunctionDeclareStmt : Stmt
     }
 }
 
+/// <inheritdoc/>
 public class ReturnStmt : Stmt
 {
     Expr? value;
@@ -246,6 +261,7 @@ public class ReturnStmt : Stmt
 }
 
 // auxiliary statements
+/// <inheritdoc/>
 public class BlockStmt : Stmt
 {
     Stmt[] statements;
@@ -262,6 +278,7 @@ public class BlockStmt : Stmt
     }
 }
 
+/// <inheritdoc/>
 public class ExpressionStmt : Stmt
 {
     Expr expression;

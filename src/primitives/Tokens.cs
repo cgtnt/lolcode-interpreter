@@ -20,6 +20,9 @@ public class Token
     public override string ToString() => $"@{line}:T_{type}:{text}";
 }
 
+/// <summary>
+/// Type of LOLCODE token. See <see href="https://github.com/cgtnt/lolcode-interpreter?tab=readme-ov-file#language-features"/>language implementation specification</see>.
+/// </summary>
 public enum TokenType
 {
     // lexer control tokens
@@ -174,6 +177,9 @@ public class TokenTranslation
 
     public static Dictionary<TokenType, string> tokenToKeyword = constructTokenToKeyword();
 
+    /// <summary>
+    /// Translates given TokenTypes to associated keywords in the LOLCODE langauge. See <see cref="TokenType"/>.
+    /// </summary>
     public static string[] TokensToKeywords(params TokenType[] types) =>
         types.Select(t => tokenToKeyword[t]).ToArray();
 

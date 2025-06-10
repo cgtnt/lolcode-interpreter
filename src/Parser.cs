@@ -13,11 +13,18 @@ public class Parser
     int next;
     bool executable = true;
 
+    /// <summary>
+    /// Create Parser.
+    /// </summary>
+    /// <param name="tokens">List of LOLCODE tokens. See <see cref="Token"/></param>
     public Parser(List<Token> tokens)
     {
         this.tokens = tokens;
     }
 
+    /// <summary>
+    /// Parse list of tokens stored in Parser.
+    /// </summary>
     public bool Parse(out Stmt? program) // entry point
     {
         program = null;
@@ -46,6 +53,9 @@ public class Parser
     }
 
     // parsing helpers
+    /// <summary>
+    /// Return next Token and advance next pointer.
+    /// </summary>
     Token consumeNext()
     {
         if (!atEOF())
@@ -56,12 +66,24 @@ public class Parser
         }
     }
 
+    /// <summary>
+    /// Return next Token without advancing next pointer.
+    /// </summary>
     Token peekNext() => tokens[next];
 
+    /// <summary>
+    /// Returns true if next pointer is at end of file.
+    /// </summary>
     bool atEOF() => peekNext().type == EOF;
 
+    /// <summary>
+    /// Return true if next Token is of specified type. See <see cref="TokenType"/>
+    /// </summary>
     bool nextIsType(params TokenType[] types) => types.Any(t => peekNext().type == t);
 
+    /// <summary>
+    /// Consume next Token if it is of specified type. See <see cref="TokenType"/>
+    /// </summary>
     bool skipIfNextIsType(params TokenType[] types)
     {
         if (nextIsType(types))
@@ -73,6 +95,9 @@ public class Parser
         return false;
     }
 
+    /// <summary>
+    /// Consume next token if it is of specified type, or throw exception. See <see cref="TokenType"/>
+    /// </summary>
     Token expect(params TokenType[] types)
     {
         if (nextIsType(types))
@@ -89,6 +114,9 @@ public class Parser
         return expect(COMMAND_TERMINATOR, EOF);
     }
 
+    /// <summary>
+    /// Skip to beginning of next statement.
+    /// </summary>
     void synchronize() // if stmt invalid, skip to beginning of next statement
     {
         while (!nextIsType(COMMAND_TERMINATOR, EOF))
@@ -98,6 +126,9 @@ public class Parser
     }
 
     // statement parsing helpers
+    /// <summary>
+    /// Parse variable declaration statement with immediate value or type.
+    /// </summary>
     VariableDeclareStmt? stictVariableDeclare(Token identifier) // declare variable with type or value
     {
         if (skipIfNextIsType(DECLARE_SET_VAR))
@@ -120,6 +151,9 @@ public class Parser
     }
 
     // block statements - body of loops, function, ifs
+    /// <summary>
+    /// Parse block of statements.
+    /// </summary>
     BlockStmt blockStatement(TokenType end)
     {
         expect(COMMAND_TERMINATOR);
@@ -144,6 +178,9 @@ public class Parser
     }
 
     // statement parser
+    /// <summary>
+    /// Parse statement. See <see cref="Stmt"/>
+    /// </summary>
     Stmt statement()
     {
         if (skipIfNextIsType(BEGIN)) // program
@@ -266,6 +303,10 @@ public class Parser
     }
 
     // expression parsing helpers
+    /// <summary>
+    /// Parse expression of unknown arity.
+    /// </summary>
+    /// <returns>Nested binary expression</returns>
     Expr naryExpr()
     {
         Token op = (consumeNext());
@@ -280,6 +321,10 @@ public class Parser
         return expr;
     }
 
+    /// <summary>
+    /// Parse function declaration parameters list.
+    /// </summary>
+    /// <returns>List of <see cref="Token"/> to be used as parameter identifies inside function body</returns>
     Token[] parameters() // func declaration parameters
     {
         List<Token> parameters = new();
@@ -294,6 +339,10 @@ public class Parser
         return parameters.ToArray();
     }
 
+    /// <summary>
+    /// Parse function call arguments list.
+    /// </summary>
+    /// <returns>List of <see cref="Expr"/> to be evaluated and passed to function as arguments</returns>
     Expr[] arguments() // func call arguments
     {
         List<Expr> args = new();
@@ -310,6 +359,9 @@ public class Parser
     }
 
     //  expression parser
+    /// <summary>
+    /// Parse expression. See <see cref="Expr"/>
+    /// </summary>
     Expr expression()
     {
         // skip optional AN separators

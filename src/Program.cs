@@ -11,11 +11,18 @@ public static class Program
 {
     static string EXECUTABLE_NAME = "[executable]";
 
+    /// <summary>
+    /// Print CLI usage instructions.
+    /// </summary>
     public static void Usage()
     {
         Console.WriteLine($"Usage: {EXECUTABLE_NAME} <source file>");
     }
 
+    /// <summary>
+    /// Process contents of given file as LOLCODE source code.
+    /// </summary>
+    /// <param name="file">Path to source file.</param>
     public static void ProcessFile(string file)
     {
         try
@@ -29,6 +36,10 @@ public static class Program
         }
     }
 
+    /// <summary>
+    /// Process given string as LOLCODE source code.
+    /// </summary>
+    /// <param name="sourceCode">LOLCODE source code.</param>
     public static void Process(string sourceCode)
     {
         try

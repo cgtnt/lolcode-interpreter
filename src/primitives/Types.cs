@@ -5,63 +5,92 @@ using static TokenizationPrimitives.TokenType;
 
 namespace TypePrimitives;
 
+/// <summary>
+/// Represents a value in the LOLCODE language. For list of value types, see <see href="https://github.com/cgtnt/lolcode-interpreter?tab=readme-ov-file#language-features"/>language implementation specification</see>.
+/// </summary>
 public abstract record Value
 {
+    /// <summary>
+    /// Get value as underlying C# type used interally by the interpreter.
+    /// </summary>
     public abstract object? RawValue { get; }
 }
 
 // types
-// NUMBR
+
+/// <summary>
+/// Represents a NUMBR in the LOLCODE language.
+/// </summary>
 public record IntValue(int Value = 0) : Value
 {
     public override object RawValue => Value;
 
+    /// <inheritdoc/>
     public override string ToString() => Value.ToString();
 }
 
-// NUMBAR
+/// <summary>
+/// Represents a NUMBAR in the LOLCODE language.
+/// </summary>
 public record FloatValue(float Value = 0) : Value
 {
     public override object RawValue => Value;
 
+    /// <inheritdoc/>
     public override string ToString() => Value.ToString();
 }
 
-// YARN
+/// <summary>
+/// Represents a YARN in the LOLCODE language.
+/// </summary>
 public record StringValue(string Value = "") : Value
 {
     public override object RawValue => Value;
 
+    /// <inheritdoc/>
     public override string ToString() => Value.ToString();
 }
 
-// TROOF
+/// <summary>
+/// Represents a TROOF in the LOLCODE language.
+/// </summary>
 public record BoolValue(bool Value = false) : Value
 {
     public override object RawValue => Value;
 
+    /// <inheritdoc/>
     public override string ToString() => Value.ToString();
 }
 
-// NOOB
+/// <summary>
+/// Represents a NOOB in the LOLCODE language.
+/// </summary>
 public record UntypedValue() : Value
 {
     public override object? RawValue => null;
 
+    /// <inheritdoc/>
     public override string ToString() => "NOOB";
 }
 
 // function type
+
+/// <summary>
+/// Represents a function in the LOLCODE language.
+/// </summary>
 public record FunctionValue(BlockStmt block, string[] parameters) : Value
 {
+    /// <inheritdoc/>
     public override object RawValue => $"function({string.Join(", ", parameters)})";
 
     public int ParametersCount => parameters.Length;
 }
 
-// implicit type casting
 public static class TypeCaster
 {
+    /// <summary>
+    /// Get LOLCODE keyword associated with the type of provided <see cref="Value"/>.
+    /// </summary>
     public static string GetValueType(Value value) // translate internal implementation types to LOLCODE language type names
     {
         switch (value)

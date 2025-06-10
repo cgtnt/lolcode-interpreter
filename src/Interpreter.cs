@@ -5,6 +5,9 @@ namespace Interpretation;
 
 public class Interpreter
 {
+    /// <summary>
+    /// Interpret <see cref="Stmt"/>.
+    /// </summary>
     public void Interpret(Stmt statement)
     {
         Scope programScope = new Scope();
