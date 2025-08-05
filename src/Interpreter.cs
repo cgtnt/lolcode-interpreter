@@ -1,3 +1,4 @@
+using System;
 using ASTPrimitives;
 using InterpretationPrimitives;
 
@@ -21,10 +22,6 @@ public class Interpreter
             ExceptionReporter.Log(
                 new RuntimeException("Cannot FOUND YR or GTFO from main program block", v.line)
             );
-        }
-        catch (RuntimeException e)
-        {
-            ExceptionReporter.Log(e);
         }
     }
 }
