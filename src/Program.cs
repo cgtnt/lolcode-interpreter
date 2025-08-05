@@ -48,23 +48,27 @@ public static class Program
     /// <param name="sourceCode">LOLCODE source code string.</param>
     public static void Process(string sourceCode)
     {
-        Lexer lexer = new(sourceCode);
-        List<string> lexemes = lexer.Lex();
+        try {
+            Lexer lexer = new(sourceCode);
+            List<string> lexemes = lexer.Lex();
 
-        Tokenizer tokenizer = new(lexemes.ToArray());
-        List<Token> tokens = tokenizer.Tokenize();
+            Tokenizer tokenizer = new(lexemes.ToArray());
+            List<Token> tokens = tokenizer.Tokenize();
 
-        Debugger.Log(string.Join('-', tokens));
+            Debugger.Log(string.Join('-', tokens));
 
-        Parser parser = new(tokens);
-        bool execute = parser.Parse(out Stmt? program);
+            Parser parser = new(tokens);
+            bool execute = parser.Parse(out Stmt? program);
 
-        if (execute && program is not null)
-        {
-            Interpreter interpreter = new();
-            interpreter.Interpret(program);
-        } else {
-            Environment.Exit(1);
+            if (execute && program is not null)
+            {
+                Interpreter interpreter = new();
+                interpreter.Interpret(program);
+            } else {
+                Environment.ExitCode = 1;
+            }
+        } catch (Exception e) { // any exception not caught before this point is a critial error
+            throw new CriticalError(e);
         }
     }
 
@@ -79,7 +83,7 @@ public static class Program
             else
               Usage();
         }
-        catch (Exception e) // any exception not caught before this point is a critial error
+        catch (CriticalError e) 
         {
             ExceptionReporter.Log(e);
             Environment.Exit(1);
