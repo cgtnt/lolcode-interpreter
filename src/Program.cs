@@ -45,7 +45,7 @@ public static class Program
     /// <summary>
     /// Process given string as LOLCODE source code.
     /// </summary>
-    /// <param name="sourceCode">LOLCODE source code.</param>
+    /// <param name="sourceCode">LOLCODE source code string.</param>
     public static void Process(string sourceCode)
     {
         Lexer lexer = new(sourceCode);
