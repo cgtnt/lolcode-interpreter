@@ -25,15 +25,21 @@ public static class Program
     /// <param name="file">Path to source file.</param>
     public static void ProcessFile(string file)
     {
-        try
-        {
-            string sourceCode = PreprocessingUtils.Utils.loadSoureCode(file);
-            Process(sourceCode);
-        }
-        catch (Exception e) // any exception that wasn't caught below this level is a critical error
-        {
-            throw new CriticalError(e);
-        }
+        string sourceCode = PreprocessingUtils.Utils.loadSoureCode(file);
+        Process(sourceCode);
+    }
+
+    /// <summary>
+    /// Process contents of standard input as LOLCODE source code.
+    /// </summary>
+    public static void ProcessStdin()
+    {
+        string? sourceCode = Console.In.ReadToEnd();
+
+        if (sourceCode is null)
+            throw new Exception("Source code must contain code (shocking)");
+
+        Process(sourceCode as string);
     }
 
     /// <summary>
@@ -42,47 +48,41 @@ public static class Program
     /// <param name="sourceCode">LOLCODE source code.</param>
     public static void Process(string sourceCode)
     {
-        try
+        Lexer lexer = new(sourceCode);
+        List<string> lexemes = lexer.Lex();
+
+        Tokenizer tokenizer = new(lexemes.ToArray());
+        List<Token> tokens = tokenizer.Tokenize();
+
+        Debugger.Log(string.Join('-', tokens));
+
+        Parser parser = new(tokens);
+        bool execute = parser.Parse(out Stmt? program);
+
+        if (execute && program is not null)
         {
-            Lexer lexer = new(sourceCode);
-            List<string> lexemes = lexer.Lex();
-
-            Tokenizer tokenizer = new(lexemes.ToArray());
-            List<Token> tokens = tokenizer.Tokenize();
-
-            Debugger.Log(string.Join('-', tokens));
-
-            Parser parser = new(tokens);
-            bool execute = parser.Parse(out Stmt? program);
-
-            if (execute && program is not null)
-            {
-                Interpreter interpreter = new();
-                interpreter.Interpret(program);
-            }
-        }
-        catch (Exception e)
-        {
-            throw new CriticalError(e);
+            Interpreter interpreter = new();
+            interpreter.Interpret(program);
+        } else {
+            Environment.Exit(1);
         }
     }
 
     public static void Main(string[] args)
     {
-        if (args.Length == 2)
+        try
         {
-            try
-            {
-                ProcessFile(args[1]);
-            }
-            catch (CriticalError e)
-            {
-                ExceptionReporter.Log(e);
-            }
+            if (args.Length == 1)
+              ProcessFile(args[0]);
+            else if (args.Length == 0)
+              ProcessStdin();
+            else
+              Usage();
         }
-        else
+        catch (Exception e) // any exception not caught before this point is a critial error
         {
-            Usage();
+            ExceptionReporter.Log(e);
+            Environment.Exit(1);
         }
     }
 }
